@@ -39,7 +39,10 @@ export const saveToFirestore = async (
     items.map(async (item) => {
       const newItemRef = await db
         .collection(`users/${userId}/events/${eventId}/items`)
-        .add(item);
+        .add({
+          eventRef: null,
+          ...item,
+        });
       itemRefMap.set(item.id, newItemRef);
     })
   );

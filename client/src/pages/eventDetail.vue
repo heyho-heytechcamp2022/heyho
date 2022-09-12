@@ -15,8 +15,6 @@ const { userId } = await getUser();
 
 const id = String(route.params.id);
 
-console.log(id);
-
 const docRef = doc(db, `users/${userId}/events`, id);
 const docSnap = await getDoc(docRef);
 
@@ -51,4 +49,5 @@ console.log(event.value);
       <div>テーマ {{ event.theme }}</div>
     </div>
   </div>
+  <router-link :to="'/events/' + id + '/orders'">注文情報一覧</router-link>
 </template>

@@ -11,6 +11,10 @@ const router = createRouter({
     { path: "/events", component: () => import("./pages/events.vue") },
     { path: "/events/new", component: () => import("./pages/eventAdd.vue") },
     { path: "/events/:id", component: () => import("./pages/eventDetail.vue") },
+    {
+      path: "/events/:eventId/orders",
+      component: () => import("./pages/orders.vue"),
+    },
   ],
 });
 

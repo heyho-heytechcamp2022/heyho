@@ -2,6 +2,7 @@ import { initializeApp } from "firebase/app";
 import { getAuth, onAuthStateChanged, User } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 import * as firebaseui from "firebaseui";
+import { getFunctions, connectFunctionsEmulator } from "firebase/functions";
 import { getApp } from "firebase/app";
 
 const firebaseConfig = {
@@ -37,3 +38,10 @@ export const getUser = async () => {
 };
 
 export const ui = new firebaseui.auth.AuthUI(auth);
+
+const functions = getFunctions(getApp());
+
+if (process.env.NODE_ENV === "development") {
+  console.log();
+  connectFunctionsEmulator(functions, "localhost", 5001);
+}

@@ -2,6 +2,7 @@ import * as functions from "firebase-functions";
 import { fetchFromEc, saveToFirestore } from "./ec";
 import { db } from "./init";
 import { sendEmail as _sendEmail } from "./email";
+import { requireAuth } from "./utils";
 
 const REGION = "asia-northeast1";
 
@@ -33,15 +34,5 @@ export const updateOrders = functions
     const eventId = data.eventId;
     await saveToFirestore(uid, eventId, ecData);
   });
-
-export const requireAuth = (context: functions.https.CallableContext) => {
-  if (!context.auth)
-    throw new functions.https.HttpsError(
-      "unauthenticated",
-      "User must be authenticated"
-    );
-
-  return context.auth.uid;
-};
 
 export const sendEmail = _sendEmail;

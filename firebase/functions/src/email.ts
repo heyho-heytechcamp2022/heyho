@@ -2,7 +2,7 @@ import * as functions from "firebase-functions";
 import { fetchFromEc, saveToFirestore } from "./ec";
 import { db } from "./init";
 import sgMail from "@sendgrid/mail";
-import { requireAuth } from ".";
+import { requireAuth } from "./utils";
 
 export const sendEmail = functions
   .region("asia-northeast1")

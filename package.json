@@ -1,0 +1,14 @@
+{
+  "name": "heyho",
+  "version": "0.1.0",
+  "description": "",
+  "main": "",
+  "scripts": {
+    "format:fix": "prettier --write . --cache"
+  },
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "prettier": "^2.7.1"
+  }
+}

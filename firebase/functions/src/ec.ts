@@ -113,14 +113,14 @@ const dummyCustomers: Customer[] = [
   {
     id: "1",
     name: "customer1",
-    email: "customer1@example.com",
+    email: "r+customer1@hosokawa.dev",
     phone: "000-0000-0000",
     address: "address1",
   },
   {
     id: "2",
     name: "customer2",
-    email: "customer2@example.com",
+    email: "r+customer2@hosokawa.dev",
     phone: "001-0001-0001",
     address: "address2",
   },

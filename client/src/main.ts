@@ -9,7 +9,7 @@ const router = createRouter({
     { path: "/", component: () => import("./pages/index.vue") },
     { path: "/events", component: () => import("./pages/events.vue") },
     { path: "/events/new", component: () => import("./pages/eventAdd.vue") },
-    { path: "/events/:id", component: () => import("./pages/event.vue") },
+    { path: "/events/:id", component: () => import("./pages/eventDetail.vue") },
   ],
 });
 

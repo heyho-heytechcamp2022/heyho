@@ -1,16 +1,15 @@
 <script setup lang="ts">
 import { ref, computed } from "vue";
 import { collection, getDocs } from "firebase/firestore";
+import { db, auth, getUser } from "~/firebase";
 
-import { db } from "~/firebase";
+const { userId } = await getUser();
 
-const querySnapshot = await getDocs(collection(db, "events"));
+const querySnapshot = await getDocs(collection(db, `users/${userId}/events`));
 
 const events = ref(
   querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }))
 );
-
-console.log(events.value);
 </script>
 
 <template>

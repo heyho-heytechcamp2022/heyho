@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { Timestamp, collection, addDoc } from "firebase/firestore";
-import { db } from "~/firebase";
 import { ref } from "vue";
 import { useRouter } from "vue-router";
+import { db, auth, getUser } from "~/firebase";
 
+const { userId } = await getUser();
 const router = useRouter();
 
 const name = ref("");
@@ -25,7 +26,7 @@ const removeOpeningTime = (index: number) => {
 
 const addEvent = async () => {
   try {
-    const docRef = await addDoc(collection(db, "events"), {
+    const docRef = await addDoc(collection(db, `users/${userId}/events`), {
       name: name.value,
       location: location.value,
       maxPreception: maxPreception.value,

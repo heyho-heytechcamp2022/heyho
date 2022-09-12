@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { onMounted } from "@vue/runtime-core";
 import { useRoute } from "vue-router";
 import { ref, computed } from "vue";
 import {
@@ -9,15 +8,16 @@ import {
   getDoc,
   updateDoc,
 } from "firebase/firestore";
-import { db } from "~/firebase";
+import { db, auth, getUser } from "~/firebase";
 
 const route = useRoute();
+const { userId } = await getUser();
 
 const id = String(route.params.id);
 
 console.log(id);
 
-const docRef = doc(db, "events", id);
+const docRef = doc(db, `users/${userId}/events`, id);
 const docSnap = await getDoc(docRef);
 
 if (!docSnap.exists()) {

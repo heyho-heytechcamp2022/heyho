@@ -20,6 +20,7 @@ const generateIam = () => crypto.randomBytes(16).toString("hex");
 
 export const saveToFirestore = async (
   userId: string,
+  eventId: string,
   data: {
     items: Item[];
     orders: Order[];
@@ -36,7 +37,9 @@ export const saveToFirestore = async (
 
   await Promise.all(
     items.map(async (item) => {
-      const newItemRef = await db.collection(`users/${userId}/items`).add(item);
+      const newItemRef = await db
+        .collection(`users/${userId}/events/${eventId}/items`)
+        .add(item);
       itemRefMap.set(item.id, newItemRef);
     })
   );
@@ -46,7 +49,7 @@ export const saveToFirestore = async (
   await Promise.all(
     customers.map(async (customer) => {
       const newCustomerRef = await db
-        .collection(`users/${userId}/customers`)
+        .collection(`users/${userId}/events/${eventId}/customers`)
         .add(customer);
       customerRefMap.set(customer.id, newCustomerRef);
     })
@@ -54,7 +57,7 @@ export const saveToFirestore = async (
 
   await Promise.all(
     orders.map(async (order) => {
-      await db.collection(`users/${userId}/orders`).add({
+      await db.collection(`users/${userId}/events/${eventId}/orders`).add({
         ...order,
         items: order.items.map((item) => ({
           ...item,

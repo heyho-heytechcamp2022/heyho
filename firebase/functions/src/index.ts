@@ -19,9 +19,18 @@ export const updateOrders = functions
   .https.onCall(async (data, context) => {
     const uid = requireAuth(context);
 
+    if (!data.eventId) {
+      throw new functions.https.HttpsError(
+        "invalid-argument",
+        "Event ID must be provided"
+      );
+    }
+
     const ecData = await fetchFromEc("stoers", "", "");
     if (!ecData) return;
-    await saveToFirestore(uid, ecData);
+
+    const eventId = data.eventId;
+    await saveToFirestore(uid, eventId, ecData);
   });
 
 const requireAuth = (context: functions.https.CallableContext) => {

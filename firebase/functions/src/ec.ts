@@ -1,6 +1,6 @@
 import { DocumentReference } from "firebase-admin/firestore";
 import { db } from "./init";
-import cryptoRandomString from "crypto-random-string";
+import * as crypto from "crypto";
 
 type Item = { id: string; name: string };
 type Order = {
@@ -16,13 +16,16 @@ type Customer = {
   address: string;
 };
 
-const generateIam = () => cryptoRandomString({ length: 32, type: "url-safe" });
+const generateIam = () => crypto.randomBytes(16).toString("hex");
 
-const saveToFirestore = async (data: {
-  items: Item[];
-  orders: Order[];
-  customers: Customer[];
-}) => {
+export const saveToFirestore = async (
+  userId: string,
+  data: {
+    items: Item[];
+    orders: Order[];
+    customers: Customer[];
+  }
+) => {
   // TODO: use transactions
 
   const items = data.items;
@@ -31,32 +34,38 @@ const saveToFirestore = async (data: {
 
   const itemRefMap = new Map<Item["id"], DocumentReference>();
 
-  items.forEach(async (item) => {
-    const newItemRef = await db.collection("items").add(item);
-    itemRefMap.set(item.id, newItemRef);
-  });
+  await Promise.all(
+    items.map(async (item) => {
+      const newItemRef = await db.collection(`users/${userId}/items`).add(item);
+      itemRefMap.set(item.id, newItemRef);
+    })
+  );
 
   const customerRefMap = new Map<Customer["id"], DocumentReference>();
 
-  customers.forEach(async (customer) => {
-    const newCustomerRef = await db.collection("customers").add(customer);
-    customerRefMap.set(customer.id, newCustomerRef);
-  });
+  await Promise.all(
+    customers.map(async (customer) => {
+      const newCustomerRef = await db
+        .collection(`users/${userId}/customers`)
+        .add(customer);
+      customerRefMap.set(customer.id, newCustomerRef);
+    })
+  );
 
-  orders.forEach(async (order) => {
-    await db.collection("orders").add({
-      ...order,
-      items: order.items.map((item) => {
-        ({
+  await Promise.all(
+    orders.map(async (order) => {
+      await db.collection(`users/${userId}/orders`).add({
+        ...order,
+        items: order.items.map((item) => ({
           ...item,
           itemRef: itemRefMap.get(item.id),
-        });
-      }),
-      customerRef: customerRefMap.get(order.customerId),
-      status: "unadjusted",
-      iam: generateIam(),
-    });
-  });
+        })),
+        customerRef: customerRefMap.get(order.customerId),
+        status: "unadjusted",
+        iam: generateIam(),
+      });
+    })
+  );
 };
 
 export const fetchFromEc = async (
@@ -64,12 +73,16 @@ export const fetchFromEc = async (
   shopId: string,
   apiKey: string
 ) => {
+  // TODO
   if (type === "stoers") {
+    return await fetchFromStoers(shopId, apiKey);
   } else if (type === "base") {
-    return;
+    return await fetchFromStoers(shopId, apiKey);
   } else if (type === "shopify") {
-    return;
+    return await fetchFromStoers(shopId, apiKey);
   }
+
+  return await fetchFromStoers(shopId, apiKey);
 };
 
 const dummyItems: Item[] = [

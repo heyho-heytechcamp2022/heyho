@@ -6,7 +6,7 @@ import { useRoute, useRouter } from "vue-router";
 import { db, auth, getUser, functions } from "~/firebase";
 import axios from "axios";
 import { Functions } from "@common";
-import t from "io-ts";
+import * as t from "io-ts";
 
 const route = useRoute();
 

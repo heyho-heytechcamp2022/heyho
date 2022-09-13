@@ -29,7 +29,7 @@ if (!docSnap.exists()) {
 const docData = docSnap.data();
 
 // TODO: Error handling
-if (!docData) return;
+if (!docData) throw new Error("docData is not found");
 
 const event = ref(docData);
 

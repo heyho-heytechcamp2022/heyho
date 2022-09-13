@@ -4,7 +4,7 @@ import { httpsCallable } from "firebase/functions";
 import { ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { db, auth, getUser, functions } from "~/firebase";
-import t from "io-ts";
+import * as t from "io-ts";
 import { Functions } from "@common";
 
 const router = useRouter();

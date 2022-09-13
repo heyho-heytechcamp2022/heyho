@@ -69,6 +69,7 @@ export const saveToFirestore = async (
         customerRef: customerRefMap.get(order.customerId),
         status: "unadjusted",
         iam: generateIam(),
+        receiptDatetime: null,
       });
     })
   );

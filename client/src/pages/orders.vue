@@ -83,9 +83,63 @@ const updateItemEvent = async (id: string, eventId: string) => {
     eventRef: eventDocRef,
   });
 };
+
+const eventOrders = ref([{
+    status: false,
+    name: "スズキ",
+    timeofreceipt: "2022/09/09 14:00 - 15:00",
+    recievedtime: "14:34",
+    address: "大阪府たこ焼き市お好み焼き区33-4",
+    tel: "080-xxxx-xxxx"
+  }]
+)
+
+const updateStatus = async (index: number) => {
+  if (!eventOrders.value[index].status){
+    eventOrders.value[index].status = true;
+  }
+};
 </script>
 
 <template>
+  <table class="admin_user-list_recieved_goods">
+    <thead>
+      <tr>
+        <th>ステータス</th>
+        <th>名前</th>
+        <th>受取予定時間</th>
+        <th>受け取った時間</th>
+        <th>住所</th>
+        <th>電話番号</th>
+      </tr>
+    </thead>
+    <tbody v-for="(eventOrder, index) in eventOrders" :key="eventOrder.name">
+      <tr>
+        <td>
+          <button
+          class="status_recieved"
+          v-if="eventOrder.status === true"
+          @click="updateStatus(index)"
+          >
+            済
+          </button>
+          <button
+          class="status_not-yet-recieved"
+          v-else-if="eventOrder.status === false"
+          @click="updateStatus(index)"
+          >
+          未</button>
+          </td>
+        <td></td>
+        <td>{{ eventOrder.name }}</td>
+        <td>{{ eventOrder.timeofreceipt }}</td>
+        <td>{{ eventOrder.recievedtime }}</td>
+        <td>{{ eventOrder.address }}</td>
+        <td>{{ eventOrder.tel }}</td>
+      </tr>
+    </tbody>
+  </table>
+
   <h1>注文一覧</h1>
   <h2>連携設定</h2>
   <h3>グッズ選択</h3>
@@ -113,3 +167,35 @@ const updateItemEvent = async (id: string, eventId: string) => {
     </div>
   </div>
 </template>
+
+<style lang="scss" scoped>
+  .admin_user-list_recieved_goods {
+    margin: 3px auto;
+    thead th {
+      padding: 10px;
+      width: auto;
+      text-align: left;
+    }
+    tbody td {
+      max-width: 300px;
+      padding: 0px 10px;
+      text-align: left;
+    }
+  }
+  .status_recieved {
+    width: 50px;
+    text-align: center;
+    background-color: rgb(136, 218, 136);
+    border-radius: 30px;
+  }
+  .status_not-yet-recieved {
+    width: 50px;
+    text-align: center;
+    background-color: rgb(248, 155, 163);
+    border-radius: 30px;
+  }
+  .time_of_receipt {
+    max-width: 50px;
+  }
+  </style>
+  

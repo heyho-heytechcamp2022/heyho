@@ -29,6 +29,12 @@ jobs:
         with:
           node-version: 16
 
+      - name: Install dependencies for common types
+        run: npm ci
+        working-directory: ./common/types
+        env:
+          CI: true
+
       - name: Install dependencies
         run: npm ci
         working-directory: ./firebase/functions
@@ -49,6 +55,12 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 16
+
+      - name: Install dependencies for common types
+        run: npm ci
+        working-directory: ./common/types
+        env:
+          CI: true
 
       - name: Install dependencies
         run: npm ci

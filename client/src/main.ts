@@ -30,6 +30,14 @@ const router = createRouter({
       component: () => import("./pages/orders.vue"),
       meta: { requireAuth: true },
     },
+    {
+      path: "/iam/:iam",
+      component: () => import("./pages/verifyIam.vue"),
+    },
+    {
+      path: "/adjust-order/:iam",
+      component: () => import("./pages/adjustOrder.vue"),
+    },
   ],
 });
 

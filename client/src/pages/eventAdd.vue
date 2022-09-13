@@ -11,12 +11,15 @@ const name = ref("");
 const location = ref("");
 const maxPreception = ref(0);
 const theme = ref("");
-const openingTimes = ref<{ from: Timestamp; to: Timestamp }[]>([]);
+const openingTimes = ref<
+  { from: Timestamp; to: Timestamp; headcount: number }[]
+>([]);
 
 const addOpeningTime = () => {
   openingTimes.value.push({
     from: Timestamp.fromDate(new Date()),
     to: Timestamp.fromDate(new Date()),
+    headcount: 0,
   });
 };
 

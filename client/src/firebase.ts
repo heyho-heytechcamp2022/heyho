@@ -39,7 +39,7 @@ export const getUser = async () => {
 
 export const ui = new firebaseui.auth.AuthUI(auth);
 
-const functions = getFunctions(getApp());
+export const functions = getFunctions(getApp(), "asia-northeast1");
 
 if (process.env.NODE_ENV === "development") {
   console.log();

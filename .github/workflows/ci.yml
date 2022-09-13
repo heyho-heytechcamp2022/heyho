@@ -24,8 +24,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-        with:
-          path: firebase/functions
 
       - uses: actions/setup-node@v3
         with:
@@ -33,11 +31,13 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+        working-directory: ./firebase/functions
         env:
           CI: true
 
       - name: build
         run: npm run build
+        working-directory: ./firebase/functions
         env:
           CI: true
 
@@ -45,8 +45,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-        with:
-          path: client
 
       - uses: actions/setup-node@v3
         with:
@@ -54,10 +52,12 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+        working-directory: ./client
         env:
           CI: true
 
       - name: build
         run: npm run build
+        working-directory: ./client
         env:
           CI: true

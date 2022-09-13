@@ -11,7 +11,7 @@ import {
   DocumentReference as DocumentReferenceAdmin,
 } from "firebase-admin/firestore";
 
-import t from "io-ts";
+import * as t from "io-ts";
 
 export const EcSite = t.union([
   t.literal("stores"),

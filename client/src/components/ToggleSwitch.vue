@@ -5,24 +5,19 @@
     <div id="circle" @click.stop.self="toggle()"></div>
   </div>
 </template>
-<script>
-export default {
-  name: "ToggleSwitch",
-  props: {
-    modelValue: {
-      type: Boolean,
-      default: false,
-    },
-  },
-  emits: ["update:modelValue"],
-  methods: {
-    toggle() {
-      this.$emit("update:modelValue", !this.modelValue);
-      console.log(this.modelValue);
-    },
-  },
+
+<script lang="ts" setup>
+const props = defineProps<{
+  modelValue: boolean;
+}>();
+
+const emit = defineEmits(["update:modelValue"]);
+
+const toggle = () => {
+  emit("update:modelValue", !props.modelValue);
 };
 </script>
+
 <style lang="scss" scoped>
 .switchArea {
   line-height: 60px;

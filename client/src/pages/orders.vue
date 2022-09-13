@@ -84,18 +84,19 @@ const updateItemEvent = async (id: string, eventId: string) => {
   });
 };
 
-const eventOrders = ref([{
+const eventOrders = ref([
+  {
     status: false,
     name: "スズキ",
     timeofreceipt: "2022/09/09 14:00 - 15:00",
     recievedtime: "14:34",
     address: "大阪府たこ焼き市お好み焼き区33-4",
-    tel: "080-xxxx-xxxx"
-  }]
-)
+    tel: "080-xxxx-xxxx",
+  },
+]);
 
 const updateStatus = async (index: number) => {
-  if (!eventOrders.value[index].status){
+  if (!eventOrders.value[index].status) {
     eventOrders.value[index].status = true;
   }
 };
@@ -117,19 +118,20 @@ const updateStatus = async (index: number) => {
       <tr>
         <td>
           <button
-          class="status_recieved"
-          v-if="eventOrder.status === true"
-          @click="updateStatus(index)"
+            class="status_recieved"
+            v-if="eventOrder.status === true"
+            @click="updateStatus(index)"
           >
             済
           </button>
           <button
-          class="status_not-yet-recieved"
-          v-else-if="eventOrder.status === false"
-          @click="updateStatus(index)"
+            class="status_not-yet-recieved"
+            v-else-if="eventOrder.status === false"
+            @click="updateStatus(index)"
           >
-          未</button>
-          </td>
+            未
+          </button>
+        </td>
         <td></td>
         <td>{{ eventOrder.name }}</td>
         <td>{{ eventOrder.timeofreceipt }}</td>
@@ -169,33 +171,32 @@ const updateStatus = async (index: number) => {
 </template>
 
 <style lang="scss" scoped>
-  .admin_user-list_recieved_goods {
-    margin: 3px auto;
-    thead th {
-      padding: 10px;
-      width: auto;
-      text-align: left;
-    }
-    tbody td {
-      max-width: 300px;
-      padding: 0px 10px;
-      text-align: left;
-    }
+.admin_user-list_recieved_goods {
+  margin: 3px auto;
+  thead th {
+    padding: 10px;
+    width: auto;
+    text-align: left;
   }
-  .status_recieved {
-    width: 50px;
-    text-align: center;
-    background-color: rgb(136, 218, 136);
-    border-radius: 30px;
+  tbody td {
+    max-width: 300px;
+    padding: 0px 10px;
+    text-align: left;
   }
-  .status_not-yet-recieved {
-    width: 50px;
-    text-align: center;
-    background-color: rgb(248, 155, 163);
-    border-radius: 30px;
-  }
-  .time_of_receipt {
-    max-width: 50px;
-  }
-  </style>
-  
+}
+.status_recieved {
+  width: 50px;
+  text-align: center;
+  background-color: rgb(136, 218, 136);
+  border-radius: 30px;
+}
+.status_not-yet-recieved {
+  width: 50px;
+  text-align: center;
+  background-color: rgb(248, 155, 163);
+  border-radius: 30px;
+}
+.time_of_receipt {
+  max-width: 50px;
+}
+</style>

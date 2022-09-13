@@ -1,9 +1,8 @@
 name: CI
 on: [push]
 jobs:
-  ci:
+  whole:
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v2
 
@@ -20,4 +19,45 @@ jobs:
         run: npm run format
         env:
           CI: true
-# TODO: lint, test, build などを追加する
+
+  functions:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          path: firebase/functions
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+
+      - name: Install dependencies
+        run: npm ci
+        env:
+          CI: true
+
+      - name: build
+        run: npm run build
+        env:
+          CI: true
+
+  client:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          path: client
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+
+      - name: Install dependencies
+        run: npm ci
+        env:
+          CI: true
+
+      - name: build
+        run: npm run build
+        env:
+          CI: true

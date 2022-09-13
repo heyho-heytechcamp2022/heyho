@@ -3,6 +3,8 @@ import { fetchFromEc, saveToFirestore } from "./ec";
 import { db } from "./init";
 import sgMail from "@sendgrid/mail";
 import { requireAuth } from "./utils";
+import { Firestore } from "@common";
+import { DocumentReference } from "firebase-admin/firestore";
 
 export const sendEmail = functions
   .region("asia-northeast1")
@@ -18,9 +20,10 @@ export const sendEmail = functions
         "Event ID must be provided"
       );
 
-    const unadjustedOrdersRef = db.collection(
-      `users/${userId}/events/${eventId}/orders`
-    );
+    const unadjustedOrdersRef = db
+      .collection(`users/${userId}/events/${eventId}/orders`)
+      .withConverter(Firestore.converter(Firestore.Order("admin")))
+      .where("adjusted", "==", false);
     const unadjustedOrdersSnapshop = await unadjustedOrdersRef
       .where("status", "==", "unadjusted")
       .get();
@@ -43,7 +46,10 @@ export const sendEmail = functions
 
     await Promise.all(
       unadjustedOrders.map(async (order, i) => {
-        const customerSnapshot = await order.customerRef.get();
+        // make type safe
+        const customerSnapshot = await (
+          order.customerRef as DocumentReference
+        ).get();
         const customer = customerSnapshot.data();
 
         const message = generateEmailMessage(order, customer);

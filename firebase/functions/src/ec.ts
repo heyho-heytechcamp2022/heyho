@@ -1,6 +1,8 @@
 import { DocumentReference } from "firebase-admin/firestore";
 import { db } from "./init";
 import * as crypto from "crypto";
+import { EcSite } from "@common";
+import t from "io-ts";
 
 type Item = { id: string; name: string };
 type Order = {
@@ -76,12 +78,12 @@ export const saveToFirestore = async (
 };
 
 export const fetchFromEc = async (
-  type: "stoers" | "base" | "shopify",
+  type: t.TypeOf<typeof EcSite>,
   shopId: string,
   apiKey: string
 ) => {
   // TODO
-  if (type === "stoers") {
+  if (type === "stores") {
     return await fetchFromStoers(shopId, apiKey);
   } else if (type === "base") {
     return await fetchFromStoers(shopId, apiKey);

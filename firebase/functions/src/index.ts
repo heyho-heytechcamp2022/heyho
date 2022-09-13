@@ -3,6 +3,8 @@ import { fetchFromEc, saveToFirestore } from "./ec";
 import { db } from "./init";
 import { sendEmail as _sendEmail } from "./email";
 import { requireAuth } from "./utils";
+import { Firestore, Functions } from "@common";
+import t from "io-ts";
 import { DocumentReference } from "firebase-admin/firestore";
 
 const REGION = "asia-northeast1";
@@ -29,7 +31,7 @@ export const updateOrders = functions
       );
     }
 
-    const ecData = await fetchFromEc("stoers", "", "");
+    const ecData = await fetchFromEc("stores", "", "");
     if (!ecData) return;
 
     const eventId = data.eventId;
@@ -38,119 +40,173 @@ export const updateOrders = functions
 
 export const findOrderByIam = functions
   .region(REGION)
-  .https.onCall(async (data, context) => {
-    const iam = data.iam;
+  .https.onCall(
+    async (
+      data
+    ): Promise<t.TypeOf<typeof Functions.FindOrderByIam.Out.Admin>> => {
+      if (!Functions.FindOrderByIam.In.is(data))
+        throw new functions.https.HttpsError(
+          "invalid-argument",
+          "Invalid argument types."
+        );
 
-    if (!iam) {
-      throw new functions.https.HttpsError(
-        "invalid-argument",
-        "IAM must be provided"
-      );
+      const iam = data.iam;
+
+      if (!iam) {
+        throw new functions.https.HttpsError(
+          "invalid-argument",
+          "IAM must be provided"
+        );
+      }
+
+      const querySnapshot = await db
+        .collectionGroup("orders")
+        .where("iam", "==", iam)
+        .withConverter(Firestore.converter(Firestore.Order("admin")))
+        .get();
+      const orderDoc = querySnapshot.docs[0];
+      const orderData = orderDoc.data();
+
+      if (!orderData)
+        throw new functions.https.HttpsError(
+          "not-found",
+          "No order data found."
+        );
+
+      const eventDoc = await orderDoc.ref.parent.parent
+        ?.withConverter(Firestore.converter(Firestore.Event))
+        .get();
+      const eventData = eventDoc?.data();
+      if (!eventDoc || !eventData)
+        throw new functions.https.HttpsError(
+          "not-found",
+          "No event data found."
+        );
+
+      // TODO: make type safe
+      const customerRef = orderDoc.data().customerRef as DocumentReference;
+      const customerDoc = await customerRef
+        .withConverter(Firestore.converter(Firestore.Customer))
+        .get();
+      const customerData = customerDoc.data();
+      if (!customerRef || !customerData)
+        throw new functions.https.HttpsError(
+          "not-found",
+          "No customer data found."
+        );
+
+      const ownerDoc = await eventDoc.ref.parent?.parent
+        ?.withConverter(Firestore.converter(Firestore.Owner))
+        .get();
+      const ownerData = ownerDoc?.data();
+      if (!ownerDoc || !ownerData)
+        throw new functions.https.HttpsError(
+          "not-found",
+          "No owner document found."
+        );
+
+      return {
+        status: "success",
+        body: {
+          owner: {
+            id: ownerDoc.id,
+            data: ownerData,
+          },
+          event: {
+            id: eventDoc.id,
+            data: eventData,
+          },
+          order: {
+            id: orderDoc.id,
+            data: orderData,
+          },
+          customer: {
+            id: customerDoc.id,
+            data: customerData,
+          },
+        },
+      };
     }
-
-    const querySnapshot = await db
-      .collectionGroup("orders")
-      .where("iam", "==", iam)
-      .get();
-    const orderDoc = querySnapshot.docs[0];
-
-    if (!orderDoc.exists) return null;
-
-    const eventDoc = await orderDoc.ref.parent.parent?.get();
-    if (!eventDoc) return null;
-
-    // TODO: type safe
-    const customerRef = orderDoc.data().customerRef as DocumentReference;
-    const customerDoc = await customerRef.get();
-
-    const ownerDoc = await eventDoc.ref.parent?.parent?.get();
-
-    return {
-      order: {
-        id: orderDoc.id,
-        data: orderDoc.data(),
-      },
-      event: {
-        id: eventDoc?.id,
-        data: eventDoc?.data(),
-      },
-      customer: {
-        id: customerDoc.id,
-        data: customerDoc.data(),
-      },
-      owner: {
-        id: ownerDoc?.id,
-        data: ownerDoc?.data(),
-      },
-    };
-  });
+  );
 
 //TODO: should be able to decrease when the order is adjusted
 export const updateHeadcount = functions
   .region(REGION)
-  .https.onCall(async (data, context) => {
-    const timesIndex = data.timesIndex;
-    const ownerId = data.ownerId;
-    const eventId = data.eventId;
-    const orderId = data.orderId;
-    const diff = data.diff;
+  .https.onCall(
+    async (
+      data,
+      context
+    ): Promise<t.TypeOf<typeof Functions.UpdateHeadcount.Out>> => {
+      if (!Functions.UpdateHeadcount.In.is(data))
+        throw new functions.https.HttpsError(
+          "invalid-argument",
+          "Invalid argument types."
+        );
 
-    if (typeof timesIndex === "undefined")
-      throw new functions.https.HttpsError(
-        "invalid-argument",
-        "Times index must be provided"
-      );
+      const timesIndex = data.timesIndex;
+      const ownerId = data.ownerId;
+      const eventId = data.eventId;
+      const orderId = data.orderId;
+      const diff = data.diff;
 
-    if (!ownerId)
-      throw new functions.https.HttpsError(
-        "invalid-argument",
-        "Owner ID must be provided"
-      );
+      if (typeof timesIndex === "undefined")
+        throw new functions.https.HttpsError(
+          "invalid-argument",
+          "Times index must be provided"
+        );
 
-    if (!eventId)
-      throw new functions.https.HttpsError(
-        "invalid-argument",
-        "Event ID must be provided"
-      );
+      if (!ownerId)
+        throw new functions.https.HttpsError(
+          "invalid-argument",
+          "Owner ID must be provided"
+        );
 
-    if (!orderId)
-      throw new functions.https.HttpsError(
-        "invalid-argument",
-        "Order ID must be provided"
-      );
+      if (!eventId)
+        throw new functions.https.HttpsError(
+          "invalid-argument",
+          "Event ID must be provided"
+        );
 
-    if (!diff)
-      throw new functions.https.HttpsError(
-        "invalid-argument",
-        "Diff must be provided"
-      );
+      if (!orderId)
+        throw new functions.https.HttpsError(
+          "invalid-argument",
+          "Order ID must be provided"
+        );
 
-    // TODO: auth check
+      if (!diff)
+        throw new functions.https.HttpsError(
+          "invalid-argument",
+          "Diff must be provided"
+        );
 
-    const eventRef = db.collection(`users/${ownerId}/events`).doc(eventId);
-    const eventDoc = await eventRef.get();
-    const event = eventDoc.data();
+      // TODO: auth check
 
-    const openingTimes = event?.openingTimes;
-    if (!openingTimes) return;
+      const eventRef = db.collection(`users/${ownerId}/events`).doc(eventId);
+      const eventDoc = await eventRef.get();
+      const event = eventDoc.data();
 
-    openingTimes[timesIndex].headcount += diff;
+      const openingTimes = event?.openingTimes;
+      if (!openingTimes)
+        throw new functions.https.HttpsError("not-found", "Event not found");
 
-    eventRef.update({ openingTimes });
+      openingTimes[timesIndex].headcount += diff;
 
-    const orderRef = db
-      .collection(`users/${ownerId}/events/${eventId}/orders`)
-      .doc(orderId);
-    orderRef.update({
-      receivingDatetime: {
-        from: openingTimes[timesIndex].from,
-        to: openingTimes[timesIndex].to,
-        timesIndex,
-      },
-      status: "adjusted",
-    });
+      eventRef.update({ openingTimes });
 
-    return { status: "ok" };
-  });
+      const orderRef = db
+        .collection(`users/${ownerId}/events/${eventId}/orders`)
+        .doc(orderId);
+      orderRef.update({
+        receivingDatetime: {
+          from: openingTimes[timesIndex].from,
+          to: openingTimes[timesIndex].to,
+          timesIndex,
+        },
+        status: "adjusted",
+      });
+
+      return { status: "success", body: null };
+    }
+  );
 
 export const sendEmail = _sendEmail;

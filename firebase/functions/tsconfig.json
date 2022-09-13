@@ -7,8 +7,12 @@
     "outDir": "lib",
     "sourceMap": true,
     "strict": true,
-    "target": "es2017"
+    "target": "es2017",
+    "baseUrl": ".",
+    "paths": {
+      "@common": ["../../common/types"]
+    }
   },
   "compileOnSave": true,
-  "include": ["src"]
+  "include": ["src", "../../common/types"]
 }

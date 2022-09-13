@@ -9,13 +9,16 @@ import {
   updateDoc,
 } from "firebase/firestore";
 import { db, auth, getUser } from "~/firebase";
+import { Firestore } from "@common";
 
 const route = useRoute();
 const { userId } = await getUser();
 
 const id = String(route.params.id);
 
-const docRef = doc(db, `users/${userId}/events`, id);
+const docRef = doc(db, `users/${userId}/events`, id).withConverter(
+  Firestore.converter(Firestore.Event)
+);
 const docSnap = await getDoc(docRef);
 
 if (!docSnap.exists()) {
@@ -23,7 +26,12 @@ if (!docSnap.exists()) {
   // TODO: error handling
 }
 
-const event = ref(docSnap.data());
+const docData = docSnap.data();
+
+// TODO: Error handling
+if (!docData) return;
+
+const event = ref(docData);
 
 console.log(event.value);
 </script>

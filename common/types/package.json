@@ -1,0 +1,13 @@
+{
+  "name": "@types/heyho",
+  "version": "0.1.1",
+  "description": "",
+  "main": "",
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "firebase": "^9.9.2",
+    "firebase-admin": "^11.0.1",
+    "io-ts": "^2.2.18"
+  }
+}

@@ -2,10 +2,15 @@
 import { ref, computed } from "vue";
 import { collection, getDocs } from "firebase/firestore";
 import { db, auth, getUser } from "~/firebase";
+import { Firestore } from "@common";
 
 const { userId } = await getUser();
 
-const querySnapshot = await getDocs(collection(db, `users/${userId}/events`));
+const querySnapshot = await getDocs(
+  collection(db, `users/${userId}/events`).withConverter(
+    Firestore.converter(Firestore.Event)
+  )
+);
 
 const events = ref(
   querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }))

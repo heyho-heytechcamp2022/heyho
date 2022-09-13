@@ -4,18 +4,21 @@ import { httpsCallable } from "firebase/functions";
 import { ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { db, auth, getUser, functions } from "~/firebase";
+import t from "io-ts";
+import { Functions } from "@common";
 
 const router = useRouter();
 const route = useRoute();
 
 const iam = String(route.params.iam);
 
-const result = await httpsCallable(
+const result = await httpsCallable<
+  t.TypeOf<typeof Functions.FindOrderByIam.In>,
+  t.TypeOf<typeof Functions.FindOrderByIam.Out.Sdk>
+>(
   functions,
   "findOrderByIam"
 )({ iam }).then((res) => res.data);
-// TODO: type safe
-// @ts-ignore
 
 if (result) {
   router.push("/adjust-order/" + iam);

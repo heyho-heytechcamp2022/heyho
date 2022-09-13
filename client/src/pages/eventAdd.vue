@@ -3,6 +3,7 @@ import { Timestamp, collection, addDoc } from "firebase/firestore";
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 import { db, auth, getUser } from "~/firebase";
+import { Firestore } from "@common";
 
 const { userId } = await getUser();
 const router = useRouter();
@@ -29,13 +30,18 @@ const removeOpeningTime = (index: number) => {
 
 const addEvent = async () => {
   try {
-    const docRef = await addDoc(collection(db, `users/${userId}/events`), {
-      name: name.value,
-      location: location.value,
-      maxPreception: maxPreception.value,
-      theme: theme.value,
-      openingTimes: openingTimes.value,
-    });
+    const docRef = await addDoc(
+      collection(db, `users/${userId}/events`).withConverter(
+        Firestore.converter(Firestore.Event)
+      ),
+      {
+        name: name.value,
+        location: location.value,
+        maxPreception: maxPreception.value,
+        theme: theme.value,
+        openingTimes: openingTimes.value,
+      }
+    );
     console.log("Document written with ID: ", docRef.id);
     router.push("/events");
   } catch {

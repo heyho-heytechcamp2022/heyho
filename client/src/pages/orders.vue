@@ -11,6 +11,7 @@ import {
   DocumentReference,
 } from "firebase/firestore";
 import { db, getUser } from "~/firebase";
+import { Firestore } from "@common";
 
 const route = useRoute();
 const { userId } = await getUser();
@@ -22,29 +23,23 @@ if (!userId) {
 
 const eventId = String(route.params.eventId);
 
-const q = query(collection(db, `users/${userId}/events/${eventId}/items`));
+const q = query(
+  collection(db, `users/${userId}/events/${eventId}/items`)
+).withConverter(Firestore.converter(Firestore.Item("sdk")));
 const querySnapshot = await getDocs(q);
 const items = querySnapshot.docs.map((doc) => ({
   docId: doc.id,
-  ...(doc.data() as { id: string; name: string; eventRef: DocumentReference }),
+  ...doc.data(),
 }));
 
-const q2 = query(collection(db, `users/${userId}/events/${eventId}/orders`));
+const q2 = query(
+  collection(db, `users/${userId}/events/${eventId}/orders`)
+).withConverter(Firestore.converter(Firestore.Order("sdk")));
 const querySnapshot2 = await getDocs(q2);
 const orders = querySnapshot2.docs.map((doc) => ({
   docId: doc.id,
-  ...(doc.data() as {
-    id: string;
-    name: string;
-    customerId: string;
-    customerRef: DocumentReference;
-    iam: string;
-    items: { id: string; itemRef: DocumentReference; quantity: number }[];
-    status: string;
-  }),
+  ...doc.data(),
 }));
-
-console.log(items);
 
 const handlingItems = items.filter(
   (item) =>
@@ -67,10 +62,11 @@ const handlingOrders = orders
 const handlingOrdersAndCustomers = await Promise.all(
   handlingOrders.map(async (order) => {
     console.log(order);
+    const ref = order.customerRef as DocumentReference;
     return {
       order,
       // TODO: 並列化
-      customer: await getDoc(order.customerRef).then((doc) => doc.data()),
+      customer: await getDoc(ref).then((doc) => doc.data()),
     };
   })
 );

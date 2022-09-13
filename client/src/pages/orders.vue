@@ -12,6 +12,7 @@ import {
 } from "firebase/firestore";
 import { db, getUser } from "~/firebase";
 import { Firestore } from "@common";
+import ToggleSwitch from "~/components/ToggleSwitch.vue";
 
 const route = useRoute();
 const { userId } = await getUser();
@@ -96,23 +97,34 @@ const updateStatus = async (index: number) => {
     eventOrders.value[index].status = true;
   }
 };
+
+const isShowStatus = ref(false);
+const isShowRecieve = ref(false);
+const isShowAddress = ref(false);
+const isShowTel = ref(false);
 </script>
 
 <template>
+  <ul class="is_show">
+    <li>ステータス<ToggleSwitch v-model="isShowStatus" /></li>
+    <li>受取予定時間<ToggleSwitch v-model="isShowRecieve" /></li>
+    <li>住所<ToggleSwitch v-model="isShowAddress" /></li>
+    <li>電話番号<ToggleSwitch v-model="isShowTel" /></li>
+  </ul>
   <table class="admin_user-list_recieved_goods">
     <thead>
       <tr>
-        <th>ステータス</th>
+        <th v-if="isShowStatus">ステータス</th>
         <th>名前</th>
-        <th>受取予定時間</th>
+        <th v-if="isShowRecieve">受取予定時間</th>
         <th>受け取った時間</th>
-        <th>住所</th>
-        <th>電話番号</th>
+        <th v-if="isShowAddress">住所</th>
+        <th v-if="isShowTel">電話番号</th>
       </tr>
     </thead>
     <tbody v-for="(eventOrder, index) in eventOrders" :key="eventOrder.name">
       <tr>
-        <td>
+        <td v-if="isShowStatus">
           <button
             class="status_recieved"
             v-if="eventOrder.status === true"
@@ -128,12 +140,11 @@ const updateStatus = async (index: number) => {
             未
           </button>
         </td>
-        <td></td>
         <td>{{ eventOrder.name }}</td>
-        <td>{{ eventOrder.timeofreceipt }}</td>
+        <td v-if="isShowRecieve">{{ eventOrder.timeofreceipt }}</td>
         <td>{{ eventOrder.recievedtime }}</td>
-        <td>{{ eventOrder.address }}</td>
-        <td>{{ eventOrder.tel }}</td>
+        <td v-if="isShowAddress">{{ eventOrder.address }}</td>
+        <td v-if="isShowTel">{{ eventOrder.tel }}</td>
       </tr>
     </tbody>
   </table>
@@ -194,5 +205,16 @@ const updateStatus = async (index: number) => {
 }
 .time_of_receipt {
   max-width: 50px;
+}
+
+ul {
+  display: flex;
+  justify-content: center;
+}
+
+li {
+  display: flex;
+  list-style: none;
+  margin-left: 20px;
 }
 </style>

@@ -19,8 +19,10 @@ const events = ref(
 </script>
 
 <template>
-  <div class="events">
+  <div class="h1-wrap">
     <h1>イベント一覧</h1>
+  </div>
+  <div class="events">
     <div>
       <div v-for="event in events" :key="event.id">
         <div class="event-link">
@@ -35,6 +37,10 @@ const events = ref(
 
 <style lang="scss" scoped>
 @use "~/styles";
+
+.h1-wrap {
+  @include styles.h1-wrap;
+}
 
 .events {
   @include styles.a-content();

@@ -37,8 +37,10 @@ console.log(event.value);
 </script>
 
 <template>
-  <div class="event-detail">
+  <div class="h1-wrap">
     <h1>イベント詳細</h1>
+  </div>
+  <div class="event-detail">
     <div class="detail">
       <div class="row">
         <h2>イベント名</h2>
@@ -86,6 +88,10 @@ console.log(event.value);
 
 .event-detail {
   @include styles.a-content();
+}
+
+.h1-wrap {
+  @include styles.h1-wrap();
 }
 
 .detail {

@@ -12,8 +12,15 @@ html {
 
 body {
   color: utl.$c-text;
+  background-color: utl.$c-base-1;
 }
 
 .material-icons {
   font-family: Material Icons;
+}
+
+h1 {
+  margin-bottom: 20px;
+  font-size: 30px;
+  font-weight: 700;
 }

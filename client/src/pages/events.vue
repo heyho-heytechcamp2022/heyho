@@ -19,10 +19,35 @@ const events = ref(
 </script>
 
 <template>
-  <h1>イベント一覧</h1>
-  <div>
-    <div v-for="event in events" :key="event.id">
-      <router-link :to="'/events/' + event.id">{{ event.name }}</router-link>
+  <div class="events">
+    <h1>イベント一覧</h1>
+    <div>
+      <div v-for="event in events" :key="event.id">
+        <div class="event-link">
+          <router-link :to="'/events/' + event.id">
+            {{ event.name }}
+          </router-link>
+        </div>
+      </div>
     </div>
   </div>
 </template>
+
+<style lang="scss" scoped>
+@use "~/styles";
+
+.events {
+  @include styles.a-content();
+}
+
+.event-link {
+  a {
+    display: block;
+    padding: 10px;
+    border-bottom: 1px solid #ccc;
+    &:hover {
+      opacity: 0.7;
+    }
+  }
+}
+</style>

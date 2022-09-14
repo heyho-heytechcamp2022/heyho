@@ -1,3 +1,13 @@
 // color
 
 $c-text: #333;
+$c-white: #fff;
+$c-base-1: #eaf0e9;
+
+@mixin a-content {
+  width: clamp(1px, 1400px, 90%);
+  margin: 30px auto 0;
+  padding: 30px;
+  border-radius: 10px;
+  background-color: $c-white;
+}

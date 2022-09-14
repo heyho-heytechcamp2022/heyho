@@ -81,20 +81,21 @@ const updateItemEvent = async (id: string, eventId: string) => {
   });
 };
 
-const eventOrders = ref([
-  {
-    status: false,
-    name: "スズキ",
-    timeofreceipt: "2022/09/09 14:00 - 15:00",
-    recievedtime: "14:34",
-    address: "大阪府たこ焼き市お好み焼き区33-4",
-    tel: "080-xxxx-xxxx",
-  },
-]);
-
+// TODO: リロードしなくても反映されるように
 const updateStatus = async (index: number) => {
-  if (!eventOrders.value[index].status) {
-    eventOrders.value[index].status = true;
+  const statusDocRef = doc(
+    db,
+    `users/${userId}/events/${eventId}/orders`,
+    handlingOrdersAndCustomers[index].order.docId
+  ).withConverter(Firestore.converter(Firestore.Order));
+  const statusDocSnap = await getDoc(statusDocRef);
+  if (
+    statusDocSnap.data()?.status !== "completed" &&
+    confirm("「済」に変更しますか？")
+  ) {
+    await updateDoc(statusDocRef, {
+      status: "completed",
+    });
   }
 };
 
@@ -147,34 +148,45 @@ const isShowTel = ref(true);
           <th v-if="isShowStatus">ステータス</th>
           <th>名前</th>
           <th v-if="isShowRecieve">受取予定時間</th>
-          <th>受け取った時間</th>
+          <!-- TODO: 受け取った時間の値を用意
+        <th>受け取った時間</th>
+        -->
           <th v-if="isShowAddress">住所</th>
           <th v-if="isShowTel">電話番号</th>
         </tr>
       </thead>
-      <tbody v-for="(eventOrder, index) in eventOrders" :key="eventOrder.name">
+      <tbody
+        v-for="(eventOrderAndCustomer, index) in handlingOrdersAndCustomers"
+        :key="eventOrderAndCustomer.order.id"
+      >
         <tr>
           <td v-if="isShowStatus">
             <button
               class="status_recieved"
-              v-if="eventOrder.status === true"
+              v-if="eventOrderAndCustomer.order.status === 'completed'"
               @click="updateStatus(index)"
             >
               済
             </button>
             <button
               class="status_not-yet-recieved"
-              v-else-if="eventOrder.status === false"
+              v-else
               @click="updateStatus(index)"
             >
               未
             </button>
           </td>
-          <td>{{ eventOrder.name }}</td>
-          <td v-if="isShowRecieve">{{ eventOrder.timeofreceipt }}</td>
-          <td>{{ eventOrder.recievedtime }}</td>
-          <td v-if="isShowAddress">{{ eventOrder.address }}</td>
-          <td v-if="isShowTel">{{ eventOrder.tel }}</td>
+          <td>{{ eventOrderAndCustomer.customer?.name }}</td>
+          <td v-if="isShowRecieve">
+            {{ eventOrderAndCustomer.order.receiptDatetime }}
+          </td>
+          <!-- TODO: 受け取った時間の値を用意
+        <td>{{ eventOrderAndCustomer.order.recievedtime }}</td>
+        -->
+          <td v-if="isShowAddress">
+            {{ eventOrderAndCustomer.customer?.address }}
+          </td>
+          <td v-if="isShowTel">{{ eventOrderAndCustomer.customer?.tel }}</td>
         </tr>
       </tbody>
     </table>

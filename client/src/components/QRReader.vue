@@ -3,7 +3,7 @@ import { ref, onMounted, onBeforeUnmount } from "vue";
 import jsQR from "jsqr";
 
 const INTERVAL = 300;
-let intervalId: number;
+const intervalId = ref(0);
 const elVideoRef = ref<HTMLVideoElement>();
 const elInternalCanvas = document.createElement("canvas");
 const emit = defineEmits(["scan"]);
@@ -59,13 +59,13 @@ onMounted(async () => {
     elInternalCanvas.height = elVideo.videoHeight;
   };
 
-  intervalId = setInterval(() => {
+  intervalId.value = window.setInterval(() => {
     scanQRCode();
   }, INTERVAL);
 });
 
 onBeforeUnmount(() => {
-  clearInterval(intervalId);
+  clearInterval(intervalId.value);
   elInternalCanvas.remove();
 
   if (elVideoRef.value && elVideoRef.value.srcObject) {

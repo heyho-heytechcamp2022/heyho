@@ -1,0 +1,26 @@
+@charset "utf-8";
+
+@forward "reset";
+@forward "utl";
+
+@use "utl";
+
+html {
+  font-family: "Noto Sans JP", Arial, Helvetica, sans-serif;
+  box-sizing: border-box;
+}
+
+body {
+  color: utl.$c-text;
+  background-color: utl.$c-base-1;
+}
+
+.material-icons {
+  font-family: Material Icons;
+}
+
+h1 {
+  margin-bottom: 20px;
+  font-size: 30px;
+  font-weight: 700;
+}

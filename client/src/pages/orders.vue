@@ -105,79 +105,91 @@ const isShowTel = ref(true);
 </script>
 
 <template>
-  <ul class="is_show">
-    <li>ステータス<ToggleSwitch v-model="isShowStatus" /></li>
-    <li>受取予定時間<ToggleSwitch v-model="isShowRecieve" /></li>
-    <li>住所<ToggleSwitch v-model="isShowAddress" /></li>
-    <li>電話番号<ToggleSwitch v-model="isShowTel" /></li>
-  </ul>
-  <table class="admin_user-list_recieved_goods">
-    <thead>
-      <tr>
-        <th v-if="isShowStatus">ステータス</th>
-        <th>名前</th>
-        <th v-if="isShowRecieve">受取予定時間</th>
-        <th>受け取った時間</th>
-        <th v-if="isShowAddress">住所</th>
-        <th v-if="isShowTel">電話番号</th>
-      </tr>
-    </thead>
-    <tbody v-for="(eventOrder, index) in eventOrders" :key="eventOrder.name">
-      <tr>
-        <td v-if="isShowStatus">
-          <button
-            class="status_recieved"
-            v-if="eventOrder.status === true"
-            @click="updateStatus(index)"
-          >
-            済
-          </button>
-          <button
-            class="status_not-yet-recieved"
-            v-else-if="eventOrder.status === false"
-            @click="updateStatus(index)"
-          >
-            未
-          </button>
-        </td>
-        <td>{{ eventOrder.name }}</td>
-        <td v-if="isShowRecieve">{{ eventOrder.timeofreceipt }}</td>
-        <td>{{ eventOrder.recievedtime }}</td>
-        <td v-if="isShowAddress">{{ eventOrder.address }}</td>
-        <td v-if="isShowTel">{{ eventOrder.tel }}</td>
-      </tr>
-    </tbody>
-  </table>
-
-  <h1>注文一覧</h1>
-  <h2>連携設定</h2>
-  <h3>グッズ選択</h3>
-  <div>
-    <div v-for="item in items" :key="item.docId">
-      <div>{{ item.name }}</div>
-      <button
-        v-if="item.eventRef?.id !== eventId"
-        @click="updateItemEvent(item.docId, eventId)"
-      >
-        選択
-      </button>
-      <button v-else @click="updateItemEvent(item.docId, '')">解除</button>
-    </div>
+  <div class="h1-wrap">
+    <h1>注文一覧</h1>
   </div>
-  <h3>注文一覧</h3>
-
-  <div
-    v-for="orderAndCustomer in handlingOrdersAndCustomers"
-    :key="orderAndCustomer.order.id"
-  >
-    {{ orderAndCustomer.customer?.name }} {{ orderAndCustomer.customer?.email }}
-    <div v-for="item in orderAndCustomer.order.items" :key="item.id">
-      {{ item.itemRef.id }} {{ item.quantity }}
+  <div class="orders">
+    <h2>連携設定</h2>
+    <h2>グッズ選択</h2>
+    <div>
+      <div v-for="item in items" :key="item.docId">
+        <div>{{ item.name }}</div>
+        <button
+          v-if="item.eventRef?.id !== eventId"
+          @click="updateItemEvent(item.docId, eventId)"
+        >
+          選択
+        </button>
+        <button v-else @click="updateItemEvent(item.docId, '')">解除</button>
+      </div>
     </div>
+    <h2>注文一覧</h2>
+    <ul class="is_show">
+      <li>ステータス<ToggleSwitch v-model="isShowStatus" /></li>
+      <li>受取予定時間<ToggleSwitch v-model="isShowRecieve" /></li>
+      <li>住所<ToggleSwitch v-model="isShowAddress" /></li>
+      <li>電話番号<ToggleSwitch v-model="isShowTel" /></li>
+    </ul>
+    <table class="admin_user-list_recieved_goods">
+      <thead>
+        <tr>
+          <th v-if="isShowStatus">ステータス</th>
+          <th>名前</th>
+          <th v-if="isShowRecieve">受取予定時間</th>
+          <th>受け取った時間</th>
+          <th v-if="isShowAddress">住所</th>
+          <th v-if="isShowTel">電話番号</th>
+        </tr>
+      </thead>
+      <tbody v-for="(eventOrder, index) in eventOrders" :key="eventOrder.name">
+        <tr>
+          <td v-if="isShowStatus">
+            <button
+              class="status_recieved"
+              v-if="eventOrder.status === true"
+              @click="updateStatus(index)"
+            >
+              済
+            </button>
+            <button
+              class="status_not-yet-recieved"
+              v-else-if="eventOrder.status === false"
+              @click="updateStatus(index)"
+            >
+              未
+            </button>
+          </td>
+          <td>{{ eventOrder.name }}</td>
+          <td v-if="isShowRecieve">{{ eventOrder.timeofreceipt }}</td>
+          <td>{{ eventOrder.recievedtime }}</td>
+          <td v-if="isShowAddress">{{ eventOrder.address }}</td>
+          <td v-if="isShowTel">{{ eventOrder.tel }}</td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 </template>
 
 <style lang="scss" scoped>
+@use "~/styles";
+
+.h1-wrap {
+  @include styles.h1-wrap;
+}
+
+.orders {
+  @include styles.a-content;
+}
+
+h2 {
+  margin-bottom: 10px;
+  font-size: 20px;
+  border-bottom: 1px solid #ccc;
+  &:not(:first-child) {
+    margin-top: 30px;
+  }
+}
+
 .admin_user-list_recieved_goods {
   margin: 3px auto;
   thead th {

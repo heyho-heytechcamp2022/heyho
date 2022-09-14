@@ -62,7 +62,7 @@ export namespace CommonFirestore {
     t.type({
       id: t.string,
       name: t.string,
-      eventRef: documentReference,
+      eventRef: t.union([t.null, documentReference]),
     });
 
   export const Customer = t.type({

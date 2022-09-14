@@ -77,7 +77,7 @@ const removeOpeningTime = (index: number) => {
   </div>
   <div>
     1 時間あたりの最大受取可能人数
-    <Input type="number" v-model="maxPreception" />
+    <Input type="number" v-model.number="maxPreception" />
   </div>
   <div>テーマ <Input type="text" v-model="theme" /></div>
   <button @click="addEvent">イベントを追加</button>

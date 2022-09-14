@@ -15,6 +15,28 @@ $h-header: 70px;
   align-items: center;
 }
 
+// break-point
+$max-tab: 1024px;
+$max-sp: 599px;
+$breakpoints: (
+  "sp": "(max-width: #{$max-sp})",
+  "tab": "(max-width: #{$max-tab})",
+) !default;
+
+@mixin mq($breakpoint) {
+  @media #{map-get($breakpoints, $breakpoint)} {
+    @content;
+  }
+}
+
+@function max($v1, $v2) {
+  @return unquote("max(#{$v1}, #{$v2})");
+}
+
+@function min($v1, $v2) {
+  @return unquote("min(#{$v1}, #{$v2})");
+}
+
 @mixin h1-wrap {
   width: clamp(1px, 1400px, 90%);
   margin: 30px auto 0;

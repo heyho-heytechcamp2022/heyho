@@ -199,7 +199,7 @@ const isShowTel = ref(true);
           <td v-if="isShowAddress">
             {{ eventOrderAndCustomer.customer?.address }}
           </td>
-          <td v-if="isShowTel">{{ eventOrderAndCustomer.customer?.tel }}</td>
+          <td v-if="isShowTel">{{ eventOrderAndCustomer.customer.phone }}</td>
         </tr>
       </tbody>
     </table>

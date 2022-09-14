@@ -1,8 +1,16 @@
 // color
 
 $c-text: #333;
+$c-text-light: #666;
 $c-white: #fff;
 $c-base-1: #eaf0e9;
+$c-primary: #e87e32;
+
+@mixin center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 
 @mixin a-content {
   width: clamp(1px, 1400px, 90%);
@@ -10,4 +18,5 @@ $c-base-1: #eaf0e9;
   padding: 30px;
   border-radius: 10px;
   background-color: $c-white;
+  box-shadow: 2px 2px 5px rgba(153, 153, 153, 0.2);
 }

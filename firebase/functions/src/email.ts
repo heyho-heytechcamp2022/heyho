@@ -24,7 +24,8 @@ export const sendEmail = functions
     const unadjustedOrdersRef = db
       .collection(`users/${userId}/events/${eventId}/orders`)
       .withConverter(Firestore.converter(Firestore.Order))
-      .where("adjusted", "==", false);
+      .where("adjusted", "==", false)
+      .withConverter(Firestore.converter(Firestore.Order));
     const unadjustedOrdersSnapshop = await unadjustedOrdersRef
       .where("status", "==", "unadjusted")
       .get();
@@ -47,11 +48,15 @@ export const sendEmail = functions
 
     await Promise.all(
       unadjustedOrders.map(async (order, i) => {
-        // make type safe
-        const customerSnapshot = await (
-          order.customerRef as DocumentReference
-        ).get();
+        const customerSnapshot = await order.customerRef
+          .withConverter(Firestore.converter(CommonFirestore.Customer))
+          .get();
         const customer = customerSnapshot.data();
+
+        if (!customer) return;
+
+        // allow to send email to r+.*@hosokawa.dev
+        if (!isTestEmailAdress(customer.email)) return;
 
         const message = generateEmailMessage(order, customer);
 
@@ -89,3 +94,6 @@ const generateEmailBody = (iam: string) => `
 `;
 
 const generateUrl = (iam: string) => `https://heyho.funs/iam/${iam}`;
+
+const isTestEmailAdress = (email: string) =>
+  /r(\+.+)?@hosokawa.dev/.test(email);

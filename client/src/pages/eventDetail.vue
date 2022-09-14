@@ -37,25 +37,86 @@ console.log(event.value);
 </script>
 
 <template>
-  <div>Event Id. {{ id }}</div>
-  <div>
-    <div>イベント名 {{ event.name }}</div>
-    <div>受取場所の説明 {{ event.location }}</div>
-    <div>
-      受付時間
-      <div
-        v-for="(openingTime, i) in event.openingTimes"
-        :key="String(openingTime.from)"
-      >
-        {{ openingTime.from }}
-        {{ openingTime.to }}
+  <div class="h1-wrap">
+    <h1>イベント詳細</h1>
+  </div>
+  <div class="event-detail">
+    <div class="detail">
+      <div class="row">
+        <h2>イベント名</h2>
+        <p class="value">
+          {{ event.name }}
+        </p>
       </div>
       <div>
-        1 時間あたりの最大受取可能人数
-        {{ event.maxPreception }}
+        <h2>受取場所の説明</h2>
+        <p class="value">
+          {{ event.location }}
+        </p>
       </div>
-      <div>テーマ {{ event.theme }}</div>
+      <div>
+        <h2>受付時間</h2>
+        <div class="value">
+          <div
+            v-for="(openingTime, i) in event.openingTimes"
+            :key="String(openingTime.from)"
+          >
+            {{ openingTime.from.toDate().toLocaleString() }} 〜
+            {{ openingTime.to.toDate().toLocaleString() }}
+          </div>
+        </div>
+        <div>
+          <h2>1 時間あたりの最大受取可能人数</h2>
+          <p class="value">{{ event.maxPreception }} 人</p>
+        </div>
+        <div>
+          <h2>テーマ</h2>
+          <p class="value">
+            {{ event.theme }}
+          </p>
+        </div>
+      </div>
     </div>
   </div>
-  <router-link :to="'/events/' + id + '/orders'">注文情報一覧</router-link>
+  <div class="bottom">
+    <router-link :to="'/events/' + id + '/orders'">注文情報一覧</router-link>
+  </div>
 </template>
+
+<style lang="scss" scoped>
+@use "~/styles";
+
+.event-detail {
+  @include styles.a-content();
+}
+
+.h1-wrap {
+  @include styles.h1-wrap();
+}
+
+.detail {
+  h2 {
+    margin-bottom: 10px;
+    font-weight: bold;
+    color: styles.$c-text-light;
+  }
+  p {
+    margin-bottom: 40px;
+    padding-left: 20px;
+  }
+}
+
+.bottom {
+  @include styles.center();
+  margin-top: 40px;
+  a {
+    padding: 10px 20px;
+    border-radius: 10px;
+    background-color: styles.$c-primary;
+    color: white;
+    &:hover {
+      opacity: 0.7;
+    }
+  }
+}
+</style>

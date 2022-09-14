@@ -1,32 +1,53 @@
 <script setup lang="ts">
 import { auth, getUser } from "~/firebase";
-import { signOut, Auth } from "firebase/auth";
+import { signOut, Auth, User } from "firebase/auth";
 import { useRouter } from "vue-router";
 import { ref } from "vue";
 import Header from "./components/Header.vue";
 
 const router = useRouter();
-const handleClick = () => {
+const handleLogoutClick = () => {
   signOut(auth).then(() => {
     router.push("/login");
     console.log("success");
   });
 };
+
 let isLogin = ref(false);
+let userInfo = ref<User>();
+
 getUser().then(({ user, userId }) => {
   isLogin.value = Boolean(user);
+  userInfo.value = user ?? undefined;
 });
+
+const handleLoginClick = () => {
+  router.push("/login");
+};
 </script>
 
 <template>
   <Suspense>
     <template #default>
       <Layout>
-        <Header>
-          <button class="signout_button" v-if="isLogin" @click="handleClick()">
-            SignOut
-          </button>
-        </Header>
+        <div class="header-wrap">
+          <Header>
+            <div v-if="isLogin" class="header-button --islogin">
+              <div class="user-icon">
+                <img :src="userInfo?.photoURL ?? ''" />
+              </div>
+              <p>
+                {{ userInfo?.displayName }}
+              </p>
+              <button class="signout-button" @click="handleLogoutClick()">
+                ログアウト
+              </button>
+            </div>
+            <div v-else>
+              <button @click="handleLoginClick">ログイン</button>
+            </div>
+          </Header>
+        </div>
         <router-view />
       </Layout>
     </template>
@@ -37,13 +58,32 @@ getUser().then(({ user, userId }) => {
 </template>
 
 <style lang="scss" scoped>
-.signout_button {
-  height: 36px;
-  background: #ff8a65;
-  border: none;
-  cursor: pointer;
-  color: white;
-  font-size: 15px;
-  border-radius: 10%;
+@use "~/styles";
+.signout-button {
+  @include styles.clickable();
+}
+
+.header-wrap {
+  position: sticky;
+  top: 0;
+}
+
+.header-button {
+  &.--islogin {
+    @include styles.center;
+    gap: 20px;
+  }
+}
+
+.user-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  overflow: hidden;
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
 }
 </style>

@@ -1,16 +1,17 @@
 import { DocumentReference } from "firebase-admin/firestore";
 import { db } from "./init";
+import { dummyItems, dummyCustomers, dummyOrders } from "./dummyData";
 import * as crypto from "crypto";
 import { EcSite } from "../../../common/types";
 import t from "io-ts";
 
-type Item = { id: string; name: string };
-type Order = {
+export type Item = { id: string; name: string };
+export type Order = {
   id: string;
   customerId: string;
   items: { id: string; quantity: number }[];
 };
-type Customer = {
+export type Customer = {
   id: string;
   name: string;
   email: string;
@@ -94,43 +95,7 @@ export const fetchFromEc = async (
   return await fetchFromStoers(shopId, apiKey);
 };
 
-const dummyItems: Item[] = [
-  { id: "1", name: "item1" },
-  { id: "2", name: "item2" },
-  { id: "3", name: "item3" },
-];
-
-const dummyOrders: Order[] = [
-  { id: "1", customerId: "1", items: [{ id: "1", quantity: 1 }] },
-  {
-    id: "2",
-    customerId: "2",
-    items: [
-      { id: "1", quantity: 1 },
-      { id: "2", quantity: 2 },
-    ],
-  },
-];
-
-const dummyCustomers: Customer[] = [
-  {
-    id: "1",
-    name: "customer1",
-    email: "r+customer1@hosokawa.dev",
-    phone: "000-0000-0000",
-    address: "address1",
-  },
-  {
-    id: "2",
-    name: "customer2",
-    email: "r+customer2@hosokawa.dev",
-    phone: "001-0001-0001",
-    address: "address2",
-  },
-];
-
 const fetchFromStoers = async (shopId: string, apiKey: string) => {
-  // TODO: implement
   return {
     items: dummyItems,
     orders: dummyOrders,

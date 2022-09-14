@@ -5,11 +5,20 @@
   "main": "",
   "scripts": {
     "format": "prettier . --check",
-    "format:fix": "prettier --write . --cache"
+    "format:fix": "prettier --write . --cache",
+    "prepare": "husky install",
+    "lint-staged": "lint-staged"
+  },
+  "lint-staged": {
+    "*.{ts, vue, json, html, css, scss, md}": [
+      "prettier --write . --cache"
+    ]
   },
   "author": "",
   "license": "MIT",
   "devDependencies": {
+    "husky": "^7.0.0",
+    "lint-staged": "^13.0.3",
     "prettier": "^2.7.1"
   }
 }

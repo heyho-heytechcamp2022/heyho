@@ -38,6 +38,10 @@ const router = createRouter({
       path: "/adjust-order/:iam",
       component: () => import("./pages/adjustOrder.vue"),
     },
+    {
+      path: "/events/:eventId/orders/check",
+      component: () => import("./pages/orderCheck.vue"),
+    },
   ],
 });
 

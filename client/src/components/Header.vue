@@ -12,8 +12,10 @@
 </template>
 
 <style lang="scss" scoped>
+@use "~/styles";
 .header_container {
   width: 100%;
+  height: styles.$h-header;
   padding: 0 25px;
   margin: auto;
   padding: 10px 50px;

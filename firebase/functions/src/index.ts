@@ -3,7 +3,7 @@ import { fetchFromEc, saveToFirestore } from "./ec";
 import { db } from "./init";
 import { sendEmail as _sendEmail } from "./email";
 import { requireAuth } from "./utils";
-import { CommonFirestore, CommonFunctions } from "@common";
+import { CommonFirestore, CommonFunctions } from "../../../common/types";
 import { Functions, Firestore } from "./types";
 import t from "io-ts";
 import { DocumentReference } from "firebase-admin/firestore";
@@ -37,6 +37,8 @@ export const updateOrders = functions
 
     const eventId = data.eventId;
     await saveToFirestore(uid, eventId, ecData);
+
+    return { success: true };
   });
 
 export const findOrderByIam = functions

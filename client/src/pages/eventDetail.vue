@@ -10,6 +10,7 @@ import {
 } from "firebase/firestore";
 import { db, auth, getUser } from "~/firebase";
 import { Firestore } from "~/types";
+import Button from "~/components/Button.vue";
 
 const route = useRoute();
 const { userId } = await getUser();
@@ -79,7 +80,7 @@ console.log(event.value);
     </div>
   </div>
   <div class="bottom">
-    <router-link :to="'/events/' + id + '/orders'">注文情報一覧</router-link>
+    <Button element="a" :href="`/events/${id}/orders`" text="注文情報一覧" />
   </div>
 </template>
 

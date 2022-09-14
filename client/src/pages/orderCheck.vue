@@ -16,7 +16,6 @@ const state = reactive<IState>({
 });
 
 const onScan = async (code: string) => {
-  console.log("onScannn");
   state.iamFromQr = code;
   const _result = await httpsCallable<
     t.TypeOf<typeof CommonFunctions.FindOrderByIam.In>,
@@ -26,11 +25,10 @@ const onScan = async (code: string) => {
     "findOrderByIam"
   )({ iam: String(state.iamFromQr) }).then((res) => res.data);
 
-  console.log("done iam");
   const result = _result.body;
 
   const orderStatus = ref(result.order.data.status);
-  const res = (await httpsCallable<
+  const res = await httpsCallable<
     t.TypeOf<typeof CommonFunctions.UpdateOrderStatus.In>,
     t.TypeOf<typeof CommonFunctions.UpdateOrderStatus.Out>
   >(
@@ -40,13 +38,12 @@ const onScan = async (code: string) => {
     ownerId: result.owner.id,
     eventId: result.event.id,
     orderId: result.order.id,
-  }).then((res) => res.data)) as { status: string };
+  }).then((res) => res.data);
 
-  console.log("presuccess");
-  if (res.status === "ok") {
+  if (res.status === 'success') {
     orderStatus.value = "completed";
     location.reload();
-  }
+   }
 };
 
 const isEnable = ref(false);

@@ -1,9 +1,9 @@
 import { createApp } from "vue";
-import "./style.css";
 import App from "./App.vue";
 import { createRouter, createWebHistory } from "vue-router";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "./firebase";
+import "./styles/_index.scss";
 
 const router = createRouter({
   history: createWebHistory(),

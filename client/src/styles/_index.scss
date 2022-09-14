@@ -1,0 +1,19 @@
+@charset "utf-8";
+
+@forward "reset";
+@forward "utl";
+
+@use "utl";
+
+html {
+  font-family: "Noto Sans JP", Arial, Helvetica, sans-serif;
+  box-sizing: border-box;
+}
+
+body {
+  color: utl.$c-text;
+}
+
+.material-icons {
+  font-family: Material Icons;
+}

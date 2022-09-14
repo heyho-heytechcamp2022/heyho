@@ -22,11 +22,17 @@ getUser().then(({ user, userId }) => {
   <Suspense>
     <template #default>
       <Layout>
-        <Header>
-          <button class="signout_button" v-if="isLogin" @click="handleClick()">
-            SignOut
-          </button>
-        </Header>
+        <div class="header-wrap">
+          <Header>
+            <button
+              class="signout_button"
+              v-if="isLogin"
+              @click="handleClick()"
+            >
+              SignOut
+            </button>
+          </Header>
+        </div>
         <router-view />
       </Layout>
     </template>
@@ -45,5 +51,10 @@ getUser().then(({ user, userId }) => {
   color: white;
   font-size: 15px;
   border-radius: 10%;
+}
+
+.header-wrap {
+  position: sticky;
+  top: 0;
 }
 </style>

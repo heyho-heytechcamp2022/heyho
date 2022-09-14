@@ -110,19 +110,30 @@ const isShowTel = ref(true);
   </div>
   <div class="orders">
     <h2>連携設定</h2>
+
     <h2>グッズ選択</h2>
-    <div>
-      <div v-for="item in items" :key="item.docId">
-        <div>{{ item.name }}</div>
+    <div class="selecting-goods">
+      <div v-for="item in items" :key="item.docId" class="item-row">
         <button
-          v-if="item.eventRef?.id !== eventId"
+          class="button --selected"
+          v-if="item.eventRef?.id === eventId"
+          @click="updateItemEvent(item.docId, '')"
+        >
+          <span class="material-symbols-outlined"> check_box </span>
+        </button>
+        <button
+          class="button --unselected"
+          v-else
           @click="updateItemEvent(item.docId, eventId)"
         >
-          選択
+          <span class="material-symbols-outlined">
+            check_box_outline_blank
+          </span>
         </button>
-        <button v-else @click="updateItemEvent(item.docId, '')">解除</button>
+        <p class="name">{{ item.name }}</p>
       </div>
     </div>
+
     <h2>注文一覧</h2>
     <ul class="is_show">
       <li>ステータス<ToggleSwitch v-model="isShowStatus" /></li>
@@ -187,6 +198,26 @@ h2 {
   border-bottom: 1px solid #ccc;
   &:not(:first-child) {
     margin-top: 30px;
+  }
+}
+
+.selecting-goods {
+  .item-row {
+    @include styles.center;
+    justify-content: flex-start;
+    margin: 10px 0;
+    .button {
+      @include styles.clickable;
+      &.--selected {
+        color: styles.$c-primary;
+      }
+      &.--unselected {
+        color: #ccc;
+      }
+    }
+    .name {
+      margin-left: 20px;
+    }
   }
 }
 

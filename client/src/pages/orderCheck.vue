@@ -40,10 +40,10 @@ const onScan = async (code: string) => {
     orderId: result.order.id,
   }).then((res) => res.data);
 
-  if (res.status === 'success') {
+  if (res.status === "success") {
     orderStatus.value = "completed";
     location.reload();
-   }
+  }
 };
 
 const isEnable = ref(false);

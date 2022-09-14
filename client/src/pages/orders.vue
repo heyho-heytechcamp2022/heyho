@@ -87,7 +87,7 @@ const updateStatus = async (index: number) => {
     db,
     `users/${userId}/events/${eventId}/orders`,
     handlingOrdersAndCustomers[index].order.docId
-  );
+  ).withConverter(Firestore.converter(Firestore.Order));
   const statusDocSnap = await getDoc(statusDocRef);
   if (
     statusDocSnap.data()?.status !== "completed" &&

@@ -143,53 +143,53 @@ const isShowTel = ref(true);
       <li>電話番号<ToggleSwitch v-model="isShowTel" /></li>
     </ul>
     <table class="admin_user-list_recieved_goods">
-    <thead>
-      <tr>
-        <th v-if="isShowStatus">ステータス</th>
-        <th>名前</th>
-        <th v-if="isShowRecieve">受取予定時間</th>
-        <!-- TODO: 受け取った時間の値を用意
+      <thead>
+        <tr>
+          <th v-if="isShowStatus">ステータス</th>
+          <th>名前</th>
+          <th v-if="isShowRecieve">受取予定時間</th>
+          <!-- TODO: 受け取った時間の値を用意
         <th>受け取った時間</th>
         -->
-        <th v-if="isShowAddress">住所</th>
-        <th v-if="isShowTel">電話番号</th>
-      </tr>
-    </thead>
-    <tbody
-      v-for="(eventOrderAndCustomer, index) in handlingOrdersAndCustomers"
-      :key="eventOrderAndCustomer.order.id"
-    >
-      <tr>
-        <td v-if="isShowStatus">
-          <button
-            class="status_recieved"
-            v-if="eventOrderAndCustomer.order.status === 'completed'"
-            @click="updateStatus(index)"
-          >
-            済
-          </button>
-          <button
-            class="status_not-yet-recieved"
-            v-else
-            @click="updateStatus(index)"
-          >
-            未
-          </button>
-        </td>
-        <td>{{ eventOrderAndCustomer.customer?.name }}</td>
-        <td v-if="isShowRecieve">
-          {{ eventOrderAndCustomer.order.receiptDatetime }}
-        </td>
-        <!-- TODO: 受け取った時間の値を用意
+          <th v-if="isShowAddress">住所</th>
+          <th v-if="isShowTel">電話番号</th>
+        </tr>
+      </thead>
+      <tbody
+        v-for="(eventOrderAndCustomer, index) in handlingOrdersAndCustomers"
+        :key="eventOrderAndCustomer.order.id"
+      >
+        <tr>
+          <td v-if="isShowStatus">
+            <button
+              class="status_recieved"
+              v-if="eventOrderAndCustomer.order.status === 'completed'"
+              @click="updateStatus(index)"
+            >
+              済
+            </button>
+            <button
+              class="status_not-yet-recieved"
+              v-else
+              @click="updateStatus(index)"
+            >
+              未
+            </button>
+          </td>
+          <td>{{ eventOrderAndCustomer.customer?.name }}</td>
+          <td v-if="isShowRecieve">
+            {{ eventOrderAndCustomer.order.receiptDatetime }}
+          </td>
+          <!-- TODO: 受け取った時間の値を用意
         <td>{{ eventOrderAndCustomer.order.recievedtime }}</td>
         -->
-        <td v-if="isShowAddress">
-          {{ eventOrderAndCustomer.customer?.address }}
-        </td>
-        <td v-if="isShowTel">{{ eventOrderAndCustomer.customer?.tel }}</td>
-      </tr>
-    </tbody>
-  </table>
+          <td v-if="isShowAddress">
+            {{ eventOrderAndCustomer.customer?.address }}
+          </td>
+          <td v-if="isShowTel">{{ eventOrderAndCustomer.customer?.tel }}</td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 </template>
 

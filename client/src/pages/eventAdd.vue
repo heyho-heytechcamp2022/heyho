@@ -8,6 +8,7 @@ import { Firestore } from "~/types";
 import Datepicker from "@vuepic/vue-datepicker";
 import "@vuepic/vue-datepicker/dist/main.css";
 import Input from "~/components/Input.vue";
+import Button from "~/components/Button.vue";
 
 const { userId } = await getUser();
 const router = useRouter();
@@ -90,10 +91,15 @@ const format = (date: Date) => {
       >
         <Datepicker v-model="openingTime.from" :format="format" /> ~
         <Datepicker v-model="openingTime.to" :format="format" />
-        <button @click="removeOpeningTime(i)">削除</button>
+        <Button
+          @click="removeOpeningTime(i)"
+          text="削除"
+          theme="simple"
+          icon="delete"
+          size="small"
+        />
       </div>
-
-      <button @click="addOpeningTime">追加</button>
+      <Button @click="addOpeningTime()" text="追加" icon="add" size="small" />
     </div>
     <div class="row">
       <p class="item">1 時間あたりの最大受取可能人数</p>
@@ -104,7 +110,9 @@ const format = (date: Date) => {
       <Input type="text" v-model="theme" />
     </div>
   </div>
-  <button @click="addEvent">イベントを追加</button>
+  <div class="bottom">
+    <Button @click="addEvent" text="イベントを追加" theme="primary" />
+  </div>
 </template>
 
 <style lang="scss" scoped>
@@ -133,5 +141,10 @@ const format = (date: Date) => {
   gap: 10px;
   margin-bottom: 10px;
   color: rgb(59, 59, 59);
+}
+
+.bottom {
+  @include styles.center;
+  margin: 30px 0 200px;
 }
 </style>

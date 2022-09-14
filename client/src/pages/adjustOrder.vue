@@ -8,6 +8,7 @@ import axios from "axios";
 import { CommonFunctions } from "@common";
 import { Firestore, Functions } from "~/types";
 import * as t from "io-ts";
+import Button from "~/components/Button.vue";
 
 const route = useRoute();
 
@@ -62,7 +63,7 @@ const generateQrCodeImageLink = (data: string) =>
       :key="String(range.from)"
     >
       {{ range.from }} 〜 {{ range.to }}
-      <button @click="selectDatetime(i, 1)">この時間を選択</button>
+      <Button @click="selectDatetime(i, 1)" text="この時間を選択" />
     </div>
   </div>
   <div v-if="orderStatus === 'reserved'">

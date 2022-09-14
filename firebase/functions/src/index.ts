@@ -206,4 +206,51 @@ export const updateHeadcount = functions
     }
   );
 
+export const updateOrderStatus = functions
+  .region(REGION)
+  .https.onCall(
+    async (
+      data,
+      context
+    ): Promise<t.TypeOf<typeof CommonFunctions.UpdateOrderStatus.Out>> => {
+      if (!CommonFunctions.UpdateOrderStatus.In.is(data))
+        throw new functions.https.HttpsError(
+          "invalid-argument",
+          "Invalid argument types."
+        );
+
+      const ownerId = data.ownerId;
+      const eventId = data.eventId;
+      const orderId = data.orderId;
+
+      if (!ownerId)
+        throw new functions.https.HttpsError(
+          "invalid-argument",
+          "Owner ID must be provided"
+        );
+
+      if (!eventId)
+        throw new functions.https.HttpsError(
+          "invalid-argument",
+          "Event ID must be provided"
+        );
+
+      if (!orderId)
+        throw new functions.https.HttpsError(
+          "invalid-argument",
+          "Order ID must be provided"
+        );
+
+      const statusRef = db
+        .collection(`users/${ownerId}/events/${eventId}/orders`)
+        .doc(orderId)
+        .withConverter(Firestore.converter(Firestore.Order));
+      statusRef.update({
+        status: "completed",
+      });
+
+      return { status: "success", body: null };
+    }
+  );
+
 export const sendEmail = _sendEmail;

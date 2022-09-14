@@ -124,4 +124,14 @@ export namespace CommonFunctions {
 
     export const Out = Response;
   }
+
+  export namespace UpdateOrderStatus {
+    export const In = t.type({
+      ownerId: t.string,
+      eventId: t.string,
+      orderId: t.string,
+    });
+
+    export const Out = Response;
+  }
 }

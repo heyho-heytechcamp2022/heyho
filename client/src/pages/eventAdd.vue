@@ -5,6 +5,9 @@ import { useRouter } from "vue-router";
 import { db, auth, getUser } from "~/firebase";
 import { CommonFirestore } from "@common";
 import { Firestore } from "~/types";
+import { log } from "console";
+import Datepicker from "@vuepic/vue-datepicker";
+import "@vuepic/vue-datepicker/dist/main.css";
 
 const { userId } = await getUser();
 const router = useRouter();
@@ -13,21 +16,7 @@ const name = ref("");
 const location = ref("");
 const maxPreception = ref(0);
 const theme = ref("");
-const openingTimes = ref<
-  { from: Timestamp; to: Timestamp; headcount: number }[]
->([]);
-
-const addOpeningTime = () => {
-  openingTimes.value.push({
-    from: Timestamp.fromDate(new Date()),
-    to: Timestamp.fromDate(new Date()),
-    headcount: 0,
-  });
-};
-
-const removeOpeningTime = (index: number) => {
-  openingTimes.value.splice(index, 1);
-};
+const openingTimes = ref<{ from: Date; to: Date; headcount: number }[]>([]);
 
 const addEvent = async () => {
   try {
@@ -40,7 +29,11 @@ const addEvent = async () => {
         location: location.value,
         maxPreception: maxPreception.value,
         theme: theme.value,
-        openingTimes: openingTimes.value,
+        openingTimes: openingTimes.value.map((openingTime) => ({
+          from: Timestamp.fromDate(openingTime.from),
+          to: Timestamp.fromDate(openingTime.to),
+          headcount: openingTime.headcount,
+        })),
       }
     );
     console.log("Document written with ID: ", docRef.id);
@@ -48,6 +41,19 @@ const addEvent = async () => {
   } catch {
     console.log("error");
   }
+};
+
+const addOpeningTime = () => {
+  openingTimes.value.push({
+    from: new Date(),
+    to: new Date(),
+    headcount: 0,
+  });
+  console.log(openingTimes.value);
+};
+
+const removeOpeningTime = (index: number) => {
+  openingTimes.value.splice(index, 1);
 };
 </script>
 
@@ -61,8 +67,8 @@ const addEvent = async () => {
       v-for="(openingTime, i) in openingTimes"
       :key="String(openingTime.from)"
     >
-      <input type="datetime-local" v-model="openingTime.from" />
-      <input type="datetime-local" v-model="openingTime.to" />
+      <Datepicker v-model="openingTime.from" />
+      <Datepicker v-model="openingTime.to" />
       <button @click="removeOpeningTime(i)">削除</button>
     </div>
 

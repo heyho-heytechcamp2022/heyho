@@ -36,6 +36,7 @@ h1 {
 }
 
 .material-symbols-outlined {
+  @include utl.clickable;
   font-family: "Material Symbols Outlined";
   font-weight: normal;
   font-style: normal;

@@ -5,7 +5,6 @@ import { useRouter } from "vue-router";
 import { db, auth, getUser } from "~/firebase";
 import { CommonFirestore } from "@common";
 import { Firestore } from "~/types";
-import { log } from "console";
 import Datepicker from "@vuepic/vue-datepicker";
 import "@vuepic/vue-datepicker/dist/main.css";
 import Input from "~/components/Input.vue";
@@ -56,29 +55,83 @@ const addOpeningTime = () => {
 const removeOpeningTime = (index: number) => {
   openingTimes.value.splice(index, 1);
 };
+
+const format = (date: Date) => {
+  const day = date.getDate();
+  const month = date.getMonth() + 1;
+  const year = date.getFullYear();
+
+  const hours = date.getHours();
+  const minutes = date.getMinutes();
+
+  return `${year}/${month}/${day} ${hours}:${minutes}`;
+};
 </script>
 
 <template>
-  <h1>イベントの追加</h1>
-  <div>イベント名 <Input type="text" v-model="name" /></div>
-  <div>受取場所の説明 <Input type="text" v-model="location" /></div>
-  <div>
-    受付時間
-    <div
-      v-for="(openingTime, i) in openingTimes"
-      :key="String(openingTime.from)"
-    >
-      <Datepicker v-model="openingTime.from" />
-      <Datepicker v-model="openingTime.to" />
-      <button @click="removeOpeningTime(i)">削除</button>
+  <div class="h1-wrap">
+    <h1>イベントの追加</h1>
+  </div>
+  <div class="event-add">
+    <div class="row">
+      <p class="item">イベント名</p>
+      <Input type="text" v-model="name" />
     </div>
+    <div class="row">
+      <p class="item">受付場所の説明</p>
+      <Input type="text" v-model="location" />
+    </div>
+    <div class="row">
+      <p class="item">受付時間</p>
+      <div
+        v-for="(openingTime, i) in openingTimes"
+        :key="String(openingTime.from)"
+        class="opening-time-row"
+      >
+        <Datepicker v-model="openingTime.from" :format="format" /> ~
+        <Datepicker v-model="openingTime.to" :format="format" />
+        <button @click="removeOpeningTime(i)">削除</button>
+      </div>
 
-    <button @click="addOpeningTime">追加</button>
+      <button @click="addOpeningTime">追加</button>
+    </div>
+    <div class="row">
+      <p class="item">1 時間あたりの最大受取可能人数</p>
+      <Input type="number" v-model.number="maxPreception" />
+    </div>
+    <div class="row">
+      <p class="item">テーマ</p>
+      <Input type="text" v-model="theme" />
+    </div>
   </div>
-  <div>
-    1 時間あたりの最大受取可能人数
-    <Input type="number" v-model.number="maxPreception" />
-  </div>
-  <div>テーマ <Input type="text" v-model="theme" /></div>
   <button @click="addEvent">イベントを追加</button>
 </template>
+
+<style lang="scss" scoped>
+@use "~/styles";
+
+.h1-wrap {
+  @include styles.h1-wrap;
+}
+
+.event-add {
+  @include styles.a-content;
+}
+
+.row {
+  margin-bottom: 30px;
+  .item {
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: rgb(106, 106, 106);
+  }
+}
+
+.opening-time-row {
+  @include styles.center();
+  justify-content: flex-start;
+  gap: 10px;
+  margin-bottom: 10px;
+  color: rgb(59, 59, 59);
+}
+</style>

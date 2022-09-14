@@ -15,6 +15,7 @@ const handleEnter = (e: KeyboardEvent) => {
   emit("enter-text-field", e);
 };
 </script>
+
 <template>
   <input
     :type="type"
@@ -28,9 +29,17 @@ const handleEnter = (e: KeyboardEvent) => {
 </template>
 
 <style lang="scss" scoped>
+@use "~/styles";
+
 .text-field {
+  width: 100%;
   padding: 7px;
-  border: 2px solid #ccc;
-  border-radius: 3px;
+  border: 1px solid #ccc;
+  background-color: rgb(244, 244, 244);
+  border-radius: 4px;
+  &:focus {
+    outline: none;
+    border-color: styles.$c-primary;
+  }
 }
 </style>

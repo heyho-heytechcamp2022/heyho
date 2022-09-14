@@ -98,10 +98,10 @@ const updateStatus = async (index: number) => {
   }
 };
 
-const isShowStatus = ref(false);
-const isShowRecieve = ref(false);
-const isShowAddress = ref(false);
-const isShowTel = ref(false);
+const isShowStatus = ref(true);
+const isShowRecieve = ref(true);
+const isShowAddress = ref(true);
+const isShowTel = ref(true);
 </script>
 
 <template>

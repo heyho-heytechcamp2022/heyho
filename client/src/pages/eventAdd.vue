@@ -8,6 +8,7 @@ import { Firestore } from "~/types";
 import { log } from "console";
 import Datepicker from "@vuepic/vue-datepicker";
 import "@vuepic/vue-datepicker/dist/main.css";
+import Input from "~/components/Input.vue";
 
 const { userId } = await getUser();
 const router = useRouter();
@@ -59,8 +60,8 @@ const removeOpeningTime = (index: number) => {
 
 <template>
   <h1>イベントの追加</h1>
-  <div>イベント名 <input type="text" v-model="name" /></div>
-  <div>受取場所の説明 <input type="text" v-model="location" /></div>
+  <div>イベント名 <Input type="text" v-model="name" /></div>
+  <div>受取場所の説明 <Input type="text" v-model="location" /></div>
   <div>
     受付時間
     <div
@@ -76,8 +77,8 @@ const removeOpeningTime = (index: number) => {
   </div>
   <div>
     1 時間あたりの最大受取可能人数
-    <input type="number" v-model="maxPreception" />
+    <Input type="number" v-model="maxPreception" />
   </div>
-  <div>テーマ <input type="text" v-model="theme" /></div>
+  <div>テーマ <Input type="text" v-model="theme" /></div>
   <button @click="addEvent">イベントを追加</button>
 </template>

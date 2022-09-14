@@ -2,7 +2,8 @@
 import { ref, computed } from "vue";
 import { collection, getDocs } from "firebase/firestore";
 import { db, auth, getUser } from "~/firebase";
-import { Firestore } from "@common";
+import { CommonFirestore } from "@common";
+import { Firestore } from "~/types";
 
 const { userId } = await getUser();
 

@@ -5,7 +5,8 @@ import { ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { db, auth, getUser, functions } from "~/firebase";
 import * as t from "io-ts";
-import { Functions } from "@common";
+import { CommonFunctions } from "@common";
+import { Firestore, Functions } from "~/types";
 
 const router = useRouter();
 const route = useRoute();
@@ -13,8 +14,8 @@ const route = useRoute();
 const iam = String(route.params.iam);
 
 const result = await httpsCallable<
-  t.TypeOf<typeof Functions.FindOrderByIam.In>,
-  t.TypeOf<typeof Functions.FindOrderByIam.Out.Sdk>
+  t.TypeOf<typeof CommonFunctions.FindOrderByIam.In>,
+  t.TypeOf<typeof Functions.FindOrderByIam.Out>
 >(
   functions,
   "findOrderByIam"

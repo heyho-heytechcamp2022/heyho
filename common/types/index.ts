@@ -1,16 +1,3 @@
-import {
-  DocumentData,
-  DocumentReference as DocumentReferenceSdk,
-  SnapshotOptions,
-  Timestamp,
-  QueryDocumentSnapshot as QueryDocumentSnapshotSdk,
-} from "firebase/firestore";
-
-import {
-  QueryDocumentSnapshot as QueryDocumentSnapshotAdmin,
-  DocumentReference as DocumentReferenceAdmin,
-} from "firebase-admin/firestore";
-
 import * as t from "io-ts";
 
 export const EcSite = t.union([
@@ -26,59 +13,37 @@ export const OrderStatus = t.union([
   t.literal("complited"),
 ]);
 
-const TimestampIots = new t.Type<Timestamp, Timestamp, unknown>(
-  "Timestamp",
-  (u): u is Timestamp => u instanceof Timestamp,
-  (u, c) => (u instanceof Timestamp ? t.success(u) : t.failure(u, c)),
-  (a) => a
-);
-
-type SdkType = "sdk" | "admin";
-
-const DocumentReference = (firebaseType: SdkType) =>
-  firebaseType === "admin"
-    ? new t.Type<DocumentReferenceAdmin, DocumentReferenceAdmin, unknown>(
-        "DocumentReferenceAdmin",
-        (u): u is DocumentReferenceAdmin => u instanceof DocumentReferenceAdmin,
-        (u, c) =>
-          u instanceof DocumentReferenceAdmin ? t.success(u) : t.failure(u, c),
-        (a) => a
-      )
-    : new t.Type<DocumentReferenceSdk, DocumentReferenceSdk, unknown>(
-        "DocumentReferenceSdk",
-        (u): u is DocumentReferenceSdk => u instanceof DocumentReferenceSdk,
-        (u, c) =>
-          u instanceof DocumentReferenceSdk ? t.success(u) : t.failure(u, c),
-        (a) => a
-      );
-
-export namespace Firestore {
+export namespace CommonFirestore {
   export const Owner = t.type({
     displayName: t.string,
     email: t.string,
   });
 
-  export const Event = t.type({
-    name: t.string,
-    location: t.string,
-    maxPreception: t.number,
-    theme: t.string,
-    openingTimes: t.array(
-      t.type({ from: TimestampIots, to: TimestampIots, headcount: t.number })
-    ),
-  });
+  export const getEvent = (timestamp: t.Type<any>) =>
+    t.type({
+      name: t.string,
+      location: t.string,
+      maxPreception: t.number,
+      theme: t.string,
+      openingTimes: t.array(
+        t.type({ from: timestamp, to: timestamp, headcount: t.number })
+      ),
+    });
 
-  export const Order = (firebaseType: SdkType) =>
+  export const getOrder = <T extends t.Mixed, S extends t.Mixed>(
+    documentReference: T,
+    timestamp: S
+  ) =>
     t.type({
       id: t.string,
       name: t.string,
       customerId: t.string,
-      customerRef: DocumentReference(firebaseType),
+      customerRef: documentReference,
       iam: t.string,
       items: t.array(
         t.type({
           id: t.string,
-          itemRef: DocumentReference(firebaseType),
+          itemRef: documentReference,
           quantity: t.number,
         })
       ),
@@ -86,18 +51,18 @@ export namespace Firestore {
       receiptDatetime: t.union([
         t.null,
         t.type({
-          from: TimestampIots,
-          to: TimestampIots,
+          from: timestamp,
+          to: timestamp,
           headcount: t.number,
         }),
       ]),
     });
 
-  export const Item = (firebaseType: SdkType) =>
+  export const getItem = <T extends t.Mixed>(documentReference: T) =>
     t.type({
       id: t.string,
       name: t.string,
-      eventRef: DocumentReference(firebaseType),
+      eventRef: documentReference,
     });
 
   export const Customer = t.type({
@@ -107,26 +72,9 @@ export namespace Firestore {
     phone: t.string,
     address: t.string,
   });
-
-  export const converter = <A extends DocumentData, O, I>(
-    type: t.Type<A, O, I>
-  ) => ({
-    toFirestore: (data: any): DocumentData => {
-      if (!type.is(data)) throw new Error("Invalid data type.");
-      return data;
-    },
-    fromFirestore: (
-      snapshot: QueryDocumentSnapshotSdk | QueryDocumentSnapshotAdmin,
-      options?: SnapshotOptions
-    ): A => {
-      const data = snapshot.data(options);
-      if (!type.is(data)) throw new Error("Invalid data type.");
-      return data;
-    },
-  });
 }
 
-export namespace Functions {
+export namespace CommonFunctions {
   const Response = t.type({
     status: t.union([t.literal("success"), t.literal("error")]),
     body: t.unknown,
@@ -137,54 +85,33 @@ export namespace Functions {
       iam: t.string,
     });
 
-    export namespace Out {
-      export const Admin = t.intersection([
+    export const getOut = <S extends t.Mixed, T extends t.Mixed>(
+      documentReference: S,
+      timestamp: T
+    ) =>
+      t.intersection([
         Response,
         t.type({
           body: t.type({
             owner: t.type({
               id: t.string,
-              data: Firestore.Owner,
+              data: CommonFirestore.Owner,
             }),
             event: t.type({
               id: t.string,
-              data: Firestore.Event,
+              data: CommonFirestore.getEvent(timestamp),
             }),
             order: t.type({
               id: t.string,
-              data: Firestore.Order("admin"),
+              data: CommonFirestore.getOrder(documentReference, timestamp),
             }),
             customer: t.type({
               id: t.string,
-              data: Firestore.Customer,
+              data: CommonFirestore.Customer,
             }),
           }),
         }),
       ]);
-      export const Sdk = t.intersection([
-        Response,
-        t.type({
-          body: t.type({
-            owner: t.type({
-              id: t.string,
-              data: Firestore.Owner,
-            }),
-            event: t.type({
-              id: t.string,
-              data: Firestore.Event,
-            }),
-            order: t.type({
-              id: t.string,
-              data: Firestore.Order("sdk"),
-            }),
-            customer: t.type({
-              id: t.string,
-              data: Firestore.Customer,
-            }),
-          }),
-        }),
-      ]);
-    }
   }
 
   export namespace UpdateHeadcount {

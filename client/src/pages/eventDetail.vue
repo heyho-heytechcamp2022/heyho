@@ -9,7 +9,7 @@ import {
   updateDoc,
 } from "firebase/firestore";
 import { db, auth, getUser } from "~/firebase";
-import { Firestore } from "@common";
+import { Firestore } from "~/types";
 
 const route = useRoute();
 const { userId } = await getUser();

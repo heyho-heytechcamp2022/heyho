@@ -3,7 +3,8 @@ import { fetchFromEc, saveToFirestore } from "./ec";
 import { db } from "./init";
 import { sendEmail as _sendEmail } from "./email";
 import { requireAuth } from "./utils";
-import { Firestore, Functions } from "@common";
+import { CommonFirestore, CommonFunctions } from "@common";
+import { Functions, Firestore } from "./types";
 import t from "io-ts";
 import { DocumentReference } from "firebase-admin/firestore";
 
@@ -41,10 +42,8 @@ export const updateOrders = functions
 export const findOrderByIam = functions
   .region(REGION)
   .https.onCall(
-    async (
-      data
-    ): Promise<t.TypeOf<typeof Functions.FindOrderByIam.Out.Admin>> => {
-      if (!Functions.FindOrderByIam.In.is(data))
+    async (data): Promise<t.TypeOf<typeof Functions.FindOrderByIam.Out>> => {
+      if (!CommonFunctions.FindOrderByIam.In.is(data))
         throw new functions.https.HttpsError(
           "invalid-argument",
           "Invalid argument types."
@@ -62,7 +61,7 @@ export const findOrderByIam = functions
       const querySnapshot = await db
         .collectionGroup("orders")
         .where("iam", "==", iam)
-        .withConverter(Firestore.converter(Firestore.Order("admin")))
+        .withConverter(Firestore.converter(Firestore.Order))
         .get();
       const orderDoc = querySnapshot.docs[0];
       const orderData = orderDoc.data();
@@ -86,7 +85,7 @@ export const findOrderByIam = functions
       // TODO: make type safe
       const customerRef = orderDoc.data().customerRef as DocumentReference;
       const customerDoc = await customerRef
-        .withConverter(Firestore.converter(Firestore.Customer))
+        .withConverter(Firestore.converter(CommonFirestore.Customer))
         .get();
       const customerData = customerDoc.data();
       if (!customerRef || !customerData)
@@ -96,7 +95,7 @@ export const findOrderByIam = functions
         );
 
       const ownerDoc = await eventDoc.ref.parent?.parent
-        ?.withConverter(Firestore.converter(Firestore.Owner))
+        ?.withConverter(Firestore.converter(CommonFirestore.Owner))
         .get();
       const ownerData = ownerDoc?.data();
       if (!ownerDoc || !ownerData)
@@ -136,8 +135,8 @@ export const updateHeadcount = functions
     async (
       data,
       context
-    ): Promise<t.TypeOf<typeof Functions.UpdateHeadcount.Out>> => {
-      if (!Functions.UpdateHeadcount.In.is(data))
+    ): Promise<t.TypeOf<typeof CommonFunctions.UpdateHeadcount.Out>> => {
+      if (!CommonFunctions.UpdateHeadcount.In.is(data))
         throw new functions.https.HttpsError(
           "invalid-argument",
           "Invalid argument types."

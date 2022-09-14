@@ -25,3 +25,8 @@ $c-primary: #e87e32;
   background-color: $c-white;
   box-shadow: 2px 2px 5px rgba(153, 153, 153, 0.2);
 }
+
+@mixin clickable {
+  cursor: pointer;
+  user-select: none;
+}

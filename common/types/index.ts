@@ -10,7 +10,7 @@ export const OrderStatus = t.union([
   t.literal("unadjusted"),
   t.literal("adjusting"),
   t.literal("reserved"),
-  t.literal("complited"),
+  t.literal("completed"),
 ]);
 
 export namespace CommonFirestore {

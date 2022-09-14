@@ -4,7 +4,9 @@
   <header>
     <div class="header_container">
       <div class="header">
-        <img src="../assets/heyho.svg" alt="heyho_logo" />
+        <a href="/">
+          <img src="../assets/heyho.svg" alt="heyho_logo" />
+        </a>
         <slot></slot>
       </div>
     </div>

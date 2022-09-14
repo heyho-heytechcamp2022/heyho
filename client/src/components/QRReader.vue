@@ -77,7 +77,7 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div><video class="video" ref="elVideoRef"></video>aaaaa</div>
+  <div><video class="video" ref="elVideoRef"></video></div>
 </template>
 
 <style lang="scss" scoped>

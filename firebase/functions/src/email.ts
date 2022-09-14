@@ -3,7 +3,7 @@ import { fetchFromEc, saveToFirestore } from "./ec";
 import { db } from "./init";
 import sgMail from "@sendgrid/mail";
 import { requireAuth } from "./utils";
-import { CommonFirestore } from "@common";
+import { CommonFirestore, CommonFunctions } from "../../../common/types";
 import { Functions, Firestore } from "./types";
 import { DocumentReference } from "firebase-admin/firestore";
 

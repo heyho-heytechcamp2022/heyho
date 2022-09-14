@@ -4,15 +4,14 @@
     "build": "tsc",
     "build:watch": "tsc --watch",
     "serve": "npm run build && firebase emulators:start --only functions",
-    "shell": "npm run build && firebase functions:shell",
-    "start": "npm run shell",
+    "shell": "firebase functions:shell",
     "deploy": "firebase deploy --only functions",
     "logs": "firebase functions:log"
   },
   "engines": {
     "node": "16"
   },
-  "main": "lib/index.js",
+  "main": "lib/firebase/functions/src/index.js",
   "dependencies": {
     "@sendgrid/mail": "^7.7.0",
     "firebase-admin": "^11.0.1",

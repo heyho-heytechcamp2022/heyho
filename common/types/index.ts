@@ -36,7 +36,6 @@ export namespace CommonFirestore {
   ) =>
     t.type({
       id: t.string,
-      name: t.string,
       customerId: t.string,
       customerRef: documentReference,
       iam: t.string,

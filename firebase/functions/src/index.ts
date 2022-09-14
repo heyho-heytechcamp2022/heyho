@@ -3,7 +3,7 @@ import { fetchFromEc, saveToFirestore } from "./ec";
 import { db } from "./init";
 import { sendEmail as _sendEmail } from "./email";
 import { requireAuth } from "./utils";
-import { CommonFirestore, CommonFunctions } from "@common";
+import { CommonFirestore, CommonFunctions } from "../../../common/types";
 import { Functions, Firestore } from "./types";
 import t from "io-ts";
 import { DocumentReference } from "firebase-admin/firestore";
@@ -20,23 +20,21 @@ export const createUserCollection = functions
     });
   });
 
-export const updateOrders = functions
+export const updateOrdersOnCreate = functions
   .region(REGION)
-  .https.onCall(async (data, context) => {
-    const uid = requireAuth(context);
-
-    if (!data.eventId) {
-      throw new functions.https.HttpsError(
-        "invalid-argument",
-        "Event ID must be provided"
-      );
-    }
+  .firestore.document("users/{userId}/events/{eventId}")
+  .onCreate(async (snap, context) => {
+    const { userId, eventId } = context.params as {
+      userId: string;
+      eventId: string;
+    };
 
     const ecData = await fetchFromEc("stores", "", "");
     if (!ecData) return;
 
-    const eventId = data.eventId;
-    await saveToFirestore(uid, eventId, ecData);
+    await saveToFirestore(userId, eventId, ecData);
+
+    return { success: true };
   });
 
 export const findOrderByIam = functions

@@ -1,4 +1,4 @@
-import { CommonFirestore, CommonFunctions } from "@common";
+import { CommonFirestore, CommonFunctions } from "../../../common/types";
 import {
   DocumentData,
   DocumentReference,

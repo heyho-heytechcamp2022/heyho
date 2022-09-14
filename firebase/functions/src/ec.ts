@@ -1,7 +1,7 @@
 import { DocumentReference } from "firebase-admin/firestore";
 import { db } from "./init";
 import * as crypto from "crypto";
-import { EcSite } from "@common";
+import { EcSite } from "../../../common/types";
 import t from "io-ts";
 
 type Item = { id: string; name: string };

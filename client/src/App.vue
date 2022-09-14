@@ -3,6 +3,7 @@ import { auth, getUser } from "~/firebase";
 import { signOut, Auth } from "firebase/auth";
 import { useRouter } from "vue-router";
 import { ref } from "vue";
+import Header from "./components/Header.vue";
 
 const router = useRouter();
 const handleClick = () => {
@@ -21,7 +22,11 @@ getUser().then(({ user, userId }) => {
   <Suspense>
     <template #default>
       <Layout>
-        <button v-if="isLogin" @click="handleClick()">SignOut</button>
+        <Header>
+          <button class="signout_button" v-if="isLogin" @click="handleClick()">
+            SignOut
+          </button>
+        </Header>
         <router-view />
       </Layout>
     </template>
@@ -30,3 +35,15 @@ getUser().then(({ user, userId }) => {
     </template>
   </Suspense>
 </template>
+
+<style lang="scss" scoped>
+.signout_button {
+  height: 36px;
+  background: #ff8a65;
+  border: none;
+  cursor: pointer;
+  color: white;
+  font-size: 15px;
+  border-radius: 10%;
+}
+</style>

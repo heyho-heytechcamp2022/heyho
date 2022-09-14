@@ -63,19 +63,32 @@ const handlingOrders = orders
 
 const handlingOrdersAndCustomers = await Promise.all(
   handlingOrders.map(async (order) => {
-    console.log(order);
+    const docSnap = await getDoc(
+      order.customerRef.withConverter(
+        Firestore.converter(CommonFirestore.Customer)
+      )
+    );
+    const docData = docSnap.data();
+    if (!docData) throw new Error("docData is not found");
+
     return {
       order,
       // TODO: 並列化
-      customer: await getDoc(order.customerRef).then((doc) => doc.data()),
+      customer: docData,
     };
   })
 );
 
 // TODO: リロードしなくても反映されるように
 const updateItemEvent = async (id: string, eventId: string) => {
-  const itemDocRef = doc(db, `users/${userId}/events/${eventId}/items`, id);
-  const eventDocRef = doc(db, `users/${userId}/events`, eventId);
+  const itemDocRef = doc(
+    db,
+    `users/${userId}/events/${eventId}/items`,
+    id
+  ).withConverter(Firestore.converter(Firestore.Item));
+  const eventDocRef = doc(db, `users/${userId}/events`, eventId).withConverter(
+    Firestore.converter(Firestore.Event)
+  );
   await updateDoc(itemDocRef, {
     eventRef: eventDocRef,
   });

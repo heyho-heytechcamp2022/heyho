@@ -3,7 +3,8 @@ import { Timestamp, collection, addDoc } from "firebase/firestore";
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 import { db, auth, getUser } from "~/firebase";
-import { Firestore } from "@common";
+import { CommonFirestore } from "@common";
+import { Firestore } from "~/types";
 
 const { userId } = await getUser();
 const router = useRouter();

@@ -11,7 +11,8 @@ import {
   DocumentReference,
 } from "firebase/firestore";
 import { db, getUser } from "~/firebase";
-import { Firestore } from "@common";
+import { CommonFirestore } from "@common";
+import { Firestore } from "~/types";
 import ToggleSwitch from "~/components/ToggleSwitch.vue";
 
 const route = useRoute();
@@ -26,7 +27,7 @@ const eventId = String(route.params.eventId);
 
 const q = query(
   collection(db, `users/${userId}/events/${eventId}/items`)
-).withConverter(Firestore.converter(Firestore.Item("sdk")));
+).withConverter(Firestore.converter(Firestore.Item));
 const querySnapshot = await getDocs(q);
 const items = querySnapshot.docs.map((doc) => ({
   docId: doc.id,
@@ -35,7 +36,7 @@ const items = querySnapshot.docs.map((doc) => ({
 
 const q2 = query(
   collection(db, `users/${userId}/events/${eventId}/orders`)
-).withConverter(Firestore.converter(Firestore.Order("sdk")));
+).withConverter(Firestore.converter(Firestore.Order));
 const querySnapshot2 = await getDocs(q2);
 const orders = querySnapshot2.docs.map((doc) => ({
   docId: doc.id,
@@ -63,11 +64,10 @@ const handlingOrders = orders
 const handlingOrdersAndCustomers = await Promise.all(
   handlingOrders.map(async (order) => {
     console.log(order);
-    const ref = order.customerRef as DocumentReference;
     return {
       order,
       // TODO: 並列化
-      customer: await getDoc(ref).then((doc) => doc.data()),
+      customer: await getDoc(order.customerRef).then((doc) => doc.data()),
     };
   })
 );

@@ -3,7 +3,8 @@ import { fetchFromEc, saveToFirestore } from "./ec";
 import { db } from "./init";
 import sgMail from "@sendgrid/mail";
 import { requireAuth } from "./utils";
-import { Firestore } from "@common";
+import { CommonFirestore } from "@common";
+import { Functions, Firestore } from "./types";
 import { DocumentReference } from "firebase-admin/firestore";
 
 export const sendEmail = functions
@@ -22,7 +23,7 @@ export const sendEmail = functions
 
     const unadjustedOrdersRef = db
       .collection(`users/${userId}/events/${eventId}/orders`)
-      .withConverter(Firestore.converter(Firestore.Order("admin")))
+      .withConverter(Firestore.converter(Firestore.Order))
       .where("adjusted", "==", false);
     const unadjustedOrdersSnapshop = await unadjustedOrdersRef
       .where("status", "==", "unadjusted")

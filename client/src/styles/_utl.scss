@@ -12,9 +12,14 @@ $c-primary: #e87e32;
   align-items: center;
 }
 
-@mixin a-content {
+@mixin h1-wrap {
   width: clamp(1px, 1400px, 90%);
   margin: 30px auto 0;
+}
+
+@mixin a-content {
+  width: clamp(1px, 1400px, 90%);
+  margin: 10px auto 0;
   padding: 30px;
   border-radius: 10px;
   background-color: $c-white;

@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
-import { useRouter, useRoute } from "vue-router";
-import { db, ui } from "~/firebase";
+import { onMounted } from "vue";
+import { useRouter } from "vue-router";
+import { ui } from "~/firebase";
 import { GoogleAuthProvider, EmailAuthProvider } from "firebase/auth";
 import "firebaseui/dist/firebaseui.css";
 

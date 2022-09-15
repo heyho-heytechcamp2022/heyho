@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { auth, getUser } from "~/firebase";
-import { signOut, Auth, User } from "firebase/auth";
+import { signOut, User } from "firebase/auth";
 import { useRouter } from "vue-router";
 import { ref } from "vue";
 import Header from "./components/Header.vue";

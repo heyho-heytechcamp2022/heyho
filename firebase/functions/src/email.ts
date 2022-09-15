@@ -1,11 +1,9 @@
 import * as functions from "firebase-functions";
-import { fetchFromEc, saveToFirestore } from "./ec";
 import { db } from "./init";
 import sgMail from "@sendgrid/mail";
 import { requireAuth } from "./utils";
 import { CommonFirestore, CommonFunctions } from "../../../common/types";
-import { Functions, Firestore } from "./types";
-import { DocumentReference } from "firebase-admin/firestore";
+import { Firestore } from "./types";
 import t from "io-ts";
 
 export const sendAdjustingEmail = functions

@@ -98,15 +98,19 @@ const updateOrderStatus = async () => {
         theme="simple"
         icon="videocam_off"
       />
-      <QRReader @scan="onScan" v-if="isEnable"></QRReader>
-      <div v-for="orderItem in orderItems">
-        <p>{{ orderItem.name }}</p>
-        <p>{{ orderItem.quantity }}</p>
+      <div class="qrreader-wrap">
+        <QRReader @scan="onScan" v-if="isEnable" />
       </div>
-      <div v-if="showGoods">
+      <div class="items">
+        <div v-for="orderItem in orderItems" class="item">
+          <p>{{ orderItem.name }}</p>
+          <p class="quantity">{{ orderItem.quantity }} 個</p>
+        </div>
+      </div>
+      <div v-if="showGoods" class="bottom">
         <Button
           @click="updateOrderStatus()"
-          text="確認"
+          text="渡しました"
           theme="primary"
           icon="check"
           size="middle"
@@ -117,6 +121,7 @@ const updateOrderStatus = async () => {
 </template>
 
 <style lang="scss" scoped>
+@use "~/styles";
 .box {
   max-width: 600px;
   margin: 0 auto;
@@ -124,5 +129,33 @@ const updateOrderStatus = async () => {
 
 .info {
   word-break: break-all;
+}
+
+.qrreader-wrap {
+  width: 100%;
+  height: fit-content;
+  margin: 0 auto 20px;
+}
+
+.items {
+  @include styles.a-content;
+  .item {
+    @include styles.center;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 10px 0;
+    border-bottom: 1px solid #ccc;
+    &:last-of-type {
+      border-bottom: none;
+    }
+    .quantity {
+      flex-shrink: 0;
+    }
+  }
+}
+
+.bottom {
+  @include styles.center;
+  margin: 20px auto;
 }
 </style>

@@ -1,11 +1,13 @@
 <script setup lang="ts">
-import { ref, computed } from "vue";
+import { ref } from "vue";
 import { collection, getDocs } from "firebase/firestore";
-import { db, auth, getUser } from "~/firebase";
-import { CommonFirestore } from "@common";
+import { db, getUser } from "~/firebase";
 import { Firestore } from "~/types";
+import Button from "~/components/Button.vue";
+import { useRouter } from "vue-router";
 
 const { userId } = await getUser();
+const router = useRouter();
 
 const querySnapshot = await getDocs(
   collection(db, `users/${userId}/events`).withConverter(
@@ -16,6 +18,10 @@ const querySnapshot = await getDocs(
 const events = ref(
   querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }))
 );
+
+const switchToEventAdd = () => {
+  router.push("/events/new");
+};
 </script>
 
 <template>
@@ -32,6 +38,14 @@ const events = ref(
         </div>
       </div>
     </div>
+  </div>
+  <div class="event-add">
+    <Button
+      @click="switchToEventAdd()"
+      text="イベント追加"
+      theme="primary"
+      icon="add"
+    />
   </div>
 </template>
 
@@ -55,5 +69,10 @@ const events = ref(
       opacity: 0.7;
     }
   }
+}
+
+.event-add {
+  @include styles.center;
+  margin: 20px auto;
 }
 </style>

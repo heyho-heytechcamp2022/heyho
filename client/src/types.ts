@@ -65,7 +65,7 @@ export namespace Functions {
   export namespace FindOrderByIam {
     export const Out = CommonFunctions.FindOrderByIam.getOut(
       DocumentReferenceIoto,
-      TimestampIots
+      CommonFirestore.SerializedTimestampIots
     );
   }
 }

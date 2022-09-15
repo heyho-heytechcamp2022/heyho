@@ -14,12 +14,17 @@ export const OrderStatus = t.union([
 ]);
 
 export namespace CommonFirestore {
+  export const SerializedTimestampIots = t.type({
+    _seconds: t.number,
+    _nanoseconds: t.number,
+  });
+
   export const Owner = t.type({
     displayName: t.string,
     email: t.string,
   });
 
-  export const getEvent = (timestamp: t.Type<any>) =>
+  export const getEvent = <T extends t.Mixed>(timestamp: T) =>
     t.type({
       name: t.string,
       location: t.string,
@@ -52,7 +57,7 @@ export namespace CommonFirestore {
         t.type({
           from: timestamp,
           to: timestamp,
-          headcount: t.number,
+          timesIndex: t.number,
         }),
       ]),
     });

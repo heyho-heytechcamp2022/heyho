@@ -24,6 +24,11 @@
   background: white;
   box-shadow: 0 0 1px 2px rgba(0, 0, 0, 0.108);
 
+  @include styles.mq(sp) {
+    padding: 0px 10px;
+    height: auto;
+  }
+
   .header {
     display: flex;
     align-items: center;

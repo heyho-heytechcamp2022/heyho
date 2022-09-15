@@ -178,7 +178,10 @@ export const updateHeadcount = functions
 
       // TODO: auth check
 
-      const eventRef = db.collection(`users/${ownerId}/events`).doc(eventId);
+      const eventRef = db
+        .collection(`users/${ownerId}/events`)
+        .doc(eventId)
+        .withConverter(Firestore.converter(Firestore.Event));
       const eventDoc = await eventRef.get();
       const event = eventDoc.data();
 
@@ -192,14 +195,15 @@ export const updateHeadcount = functions
 
       const orderRef = db
         .collection(`users/${ownerId}/events/${eventId}/orders`)
-        .doc(orderId);
+        .doc(orderId)
+        .withConverter(Firestore.converter(Firestore.Order));
       orderRef.update({
-        receivingDatetime: {
+        receiptDatetime: {
           from: openingTimes[timesIndex].from,
           to: openingTimes[timesIndex].to,
           timesIndex,
         },
-        status: "adjusted",
+        status: "reserved",
       });
 
       return { status: "success", body: null };

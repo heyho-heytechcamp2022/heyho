@@ -39,9 +39,7 @@ const handleLoginClick = () => {
               <p>
                 {{ userInfo?.displayName }}
               </p>
-              <button class="signout-button" @click="handleLogoutClick()">
-                ログアウト
-              </button>
+              <button @click="handleLogoutClick()">ログアウト</button>
             </div>
             <div v-else>
               <button @click="handleLoginClick">ログイン</button>
@@ -61,6 +59,9 @@ const handleLoginClick = () => {
 @use "~/styles";
 .signout-button {
   @include styles.clickable();
+  @include styles.mq(sp) {
+    width: 95px;
+  }
 }
 
 .header-wrap {
@@ -72,6 +73,12 @@ const handleLoginClick = () => {
   &.--islogin {
     @include styles.center;
     gap: 20px;
+    @include styles.mq(sp) {
+      gap: 10px;
+    }
+  }
+  p {
+    width: 80px;
   }
 }
 
@@ -80,6 +87,10 @@ const handleLoginClick = () => {
   height: 40px;
   border-radius: 50%;
   overflow: hidden;
+  @include styles.mq(sp) {
+    width: 30px;
+    height: 30px;
+  }
   img {
     width: 100%;
     height: 100%;

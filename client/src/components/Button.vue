@@ -28,7 +28,7 @@ const handleClick = () => {
 <template>
   <div class="button">
     <component
-      is="a"
+      :is="props.element"
       :href="props.href"
       class="button__element"
       :class="`button__element--${props.theme} button__element--${props.size}`"

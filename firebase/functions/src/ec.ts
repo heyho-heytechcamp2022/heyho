@@ -4,6 +4,8 @@ import { dummyItems, dummyCustomers, dummyOrders } from "./dummyData";
 import * as crypto from "crypto";
 import { EcSite } from "../../../common/types";
 import t from "io-ts";
+import { Firestore } from "./types";
+import { CommonFirestore } from "../../../common/types";
 
 export type Item = { id: string; name: string };
 export type Order = {
@@ -56,6 +58,7 @@ export const saveToFirestore = async (
     customers.map(async (customer) => {
       const newCustomerRef = await db
         .collection(`users/${userId}/events/${eventId}/customers`)
+        .withConverter(Firestore.converter(CommonFirestore.Customer))
         .add(customer);
       customerRefMap.set(customer.id, newCustomerRef);
     })
@@ -63,17 +66,31 @@ export const saveToFirestore = async (
 
   await Promise.all(
     orders.map(async (order) => {
-      await db.collection(`users/${userId}/events/${eventId}/orders`).add({
-        ...order,
-        items: order.items.map((item) => ({
-          ...item,
-          itemRef: itemRefMap.get(item.id),
-        })),
-        customerRef: customerRefMap.get(order.customerId),
-        status: "unadjusted",
-        iam: generateIam(),
-        receiptDatetime: null,
-      });
+      const customerRef = customerRefMap.get(order.customerId);
+
+      if (!customerRef) return;
+
+      await db
+        .collection(`users/${userId}/events/${eventId}/orders`)
+        .withConverter(Firestore.converter(Firestore.Order))
+        .add({
+          ...order,
+          items: order.items.map((item) => {
+            const itemRef = itemRefMap.get(item.id);
+            if (!itemRef) {
+              throw new Error("ItemRef not found:" + item.id);
+            }
+            return {
+              ...item,
+              itemRef: itemRef,
+            };
+          }),
+          customerRef,
+          status: "unadjusted",
+          iam: generateIam(),
+          receiptDatetime: null,
+          recievedDateTime: null,
+        });
     })
   );
 };

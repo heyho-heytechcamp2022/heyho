@@ -9,11 +9,13 @@ import {
   updateDoc,
   query,
   DocumentReference,
+  onSnapshot,
 } from "firebase/firestore";
 import { db, getUser } from "~/firebase";
 import { CommonFirestore } from "@common";
 import { Firestore } from "~/types";
 import ToggleSwitch from "~/components/ToggleSwitch.vue";
+import * as t from "io-ts";
 
 const route = useRoute();
 const { userId } = await getUser();
@@ -28,27 +30,35 @@ const eventId = String(route.params.eventId);
 const q = query(
   collection(db, `users/${userId}/events/${eventId}/items`)
 ).withConverter(Firestore.converter(Firestore.Item));
-const querySnapshot = await getDocs(q);
-const items = querySnapshot.docs.map((doc) => ({
-  docId: doc.id,
-  ...doc.data(),
-}));
+
+let items = ref<(t.TypeOf<typeof Firestore.Item> & { docId: string })[]>([]);
+
+const unsub = onSnapshot(q, (querySnapshot) => {
+  items.value = querySnapshot.docs.map((doc) => ({
+    docId: doc.id,
+    ...doc.data(),
+  }));
+});
+
+let orders = ref<(t.TypeOf<typeof Firestore.Order> & { docId: string })[]>([]);
 
 const q2 = query(
   collection(db, `users/${userId}/events/${eventId}/orders`)
 ).withConverter(Firestore.converter(Firestore.Order));
-const querySnapshot2 = await getDocs(q2);
-const orders = querySnapshot2.docs.map((doc) => ({
-  docId: doc.id,
-  ...doc.data(),
-}));
 
-const handlingItems = items.filter(
+const unsub2 = onSnapshot(q2, (querySnapshot) => {
+  orders.value = querySnapshot.docs.map((doc) => ({
+    docId: doc.id,
+    ...doc.data(),
+  }));
+});
+
+const handlingItems = items.value.filter(
   (item) =>
     item.eventRef?.id === doc(db, `users/${userId}/events/${eventId}`).id
 );
 
-const handlingOrders = orders
+const handlingOrders = orders.value
   .map((order) => {
     return {
       ...order,
@@ -73,14 +83,12 @@ const handlingOrdersAndCustomers = await Promise.all(
 
     return {
       order,
-      // TODO: 並列化
       customer: docData,
     };
   })
 );
 
-// TODO: リロードしなくても反映されるように
-const updateItemEvent = async (id: string, eventId: string) => {
+const updateItemEvent = async (id: string, willSelect: boolean) => {
   const itemDocRef = doc(
     db,
     `users/${userId}/events/${eventId}/items`,
@@ -90,7 +98,7 @@ const updateItemEvent = async (id: string, eventId: string) => {
     Firestore.converter(Firestore.Event)
   );
   await updateDoc(itemDocRef, {
-    eventRef: eventDocRef,
+    eventRef: willSelect ? eventDocRef : null,
   });
 };
 
@@ -131,14 +139,14 @@ const isShowTel = ref(true);
         <button
           class="button --selected"
           v-if="item.eventRef?.id === eventId"
-          @click="updateItemEvent(item.docId, '')"
+          @click="updateItemEvent(item.docId, false)"
         >
           <span class="material-symbols-outlined"> check_box </span>
         </button>
         <button
           class="button --unselected"
           v-else
-          @click="updateItemEvent(item.docId, eventId)"
+          @click="updateItemEvent(item.docId, true)"
         >
           <span class="material-symbols-outlined">
             check_box_outline_blank

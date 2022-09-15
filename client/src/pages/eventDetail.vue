@@ -59,6 +59,8 @@ const addStaff = async () => {
     window.location.reload();
   }
 };
+
+const nowUrl = ref(location.href + "orders/check");
 </script>
 
 <template>
@@ -105,7 +107,9 @@ const addStaff = async () => {
         <h2>スタッフ一覧</h2>
         <div class="value staff-list">
           <p>
-            スタッフ権限が与えられたアカウントはグッズの受渡しを行なうことができます。
+            スタッフ権限が与えられたアカウントはグッズの受渡しを行なうことができます。<br />
+            以下の URL をスタッフの方に共有してください。<br />
+            {{ `${nowUrl}` }}
           </p>
           <div v-for="email in event.staffEmails" class="email">
             {{ email }}

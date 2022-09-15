@@ -34,7 +34,7 @@ const event = ref(docData);
 onMounted(() => {
   const element = document.getElementById("canvas");
   if (!element) return;
-  element.style.backgroundColor = event.value.theme
+  element.style.backgroundColor = event.value.theme;
 });
 
 const newStaffEmail = ref("");
@@ -103,10 +103,10 @@ const nowUrl = ref(location.href + "orders/check");
         </div>
         <div>
           <h2>テーマカラー</h2>
-          <p class="value">
+          <div class="value">
             {{ event.theme }}
             <div class="canvas" id="canvas"></div>
-          </p>
+          </div>
         </div>
       </div>
       <div>

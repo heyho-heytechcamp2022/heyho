@@ -1,7 +1,7 @@
 import * as functions from "firebase-functions";
 import { fetchFromEc, saveToFirestore } from "./ec";
 import { db } from "./init";
-import { sendEmail as _sendEmail } from "./email";
+import { sendAdjustingEmail as _sendAdjustingEmail } from "./email";
 import { requireAuth } from "./utils";
 import { CommonFirestore, CommonFunctions } from "../../../common/types";
 import { Functions, Firestore } from "./types";
@@ -258,4 +258,4 @@ export const updateOrderStatus = functions
     }
   );
 
-export const sendEmail = _sendEmail;
+export const sendAdjustingEmail = _sendAdjustingEmail;

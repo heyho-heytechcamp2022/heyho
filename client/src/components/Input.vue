@@ -1,9 +1,11 @@
 <script lang="ts" setup>
 type Props = {
   modelValue: string | number;
-  type: "text" | "number";
+  type: "text" | "number" | "email";
+  placeholder?: string;
 };
-const props = defineProps<Props>();
+
+defineProps<Props>();
 const emit = defineEmits(["update:modelValue", "enter-text-field"]);
 const handleInput = (e: Event) => {
   if (!(e.target instanceof HTMLInputElement)) {
@@ -20,6 +22,7 @@ const handleEnter = (e: KeyboardEvent) => {
   <input
     :type="type"
     :value="modelValue"
+    :placeholder="placeholder ?? ''"
     :class="{
       'text-field': true,
     }"
@@ -40,6 +43,9 @@ const handleEnter = (e: KeyboardEvent) => {
   &:focus {
     outline: none;
     border-color: styles.$c-primary;
+  }
+  &::placeholder {
+    color: rgb(144, 144, 144);
   }
 }
 </style>

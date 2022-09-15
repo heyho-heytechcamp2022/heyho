@@ -106,10 +106,12 @@ const nowUrl = ref(location.href + "orders/check");
       <div>
         <h2>スタッフ一覧</h2>
         <div class="value staff-list">
-          <p>
+          <p class="desc">
             スタッフ権限が与えられたアカウントはグッズの受渡しを行なうことができます。<br />
             以下の URL をスタッフの方に共有してください。<br />
-            {{ `${nowUrl}` }}
+            <span>
+              {{ nowUrl }}
+            </span>
           </p>
           <div v-for="email in event.staffEmails" class="email">
             {{ email }}
@@ -159,6 +161,13 @@ const nowUrl = ref(location.href + "orders/check");
 }
 
 .staff-list {
+  .desc {
+    margin-bottom: 20px;
+    line-height: 1.7;
+    span {
+      font-weight: bold;
+    }
+  }
   .email {
     margin: 20px 0;
   }

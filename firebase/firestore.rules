@@ -2,9 +2,37 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth.uid != null;
+    }
+
+    function isOwner(userId) {
+      return signedIn() && request.auth.uid == userId;
+    }
+
+    function isStaff(userId, eventId) {
+      return signedIn() &&
+             get(/databases/$(database)/documents/users/$(request.auth.uid)).data.email in request.auth.uid in get(/databases/$(database)/documents/users/$(userId)/events/$(eventId)).data.staffEmails;
+    }
+
     match /{document=**} {
-      allow read, write: if
-          request.time < timestamp.date(2022, 10, 11);
+      allow read : if signedIn();
+    }
+
+    match /users/{userId} {
+      allow write: if isOwner(userId);
+      match /events/{eventId} {
+        allow write: if isOwner(userId);
+        match /items/{itemId} {
+          allow write: if isOwner(userId);
+        }
+        match /orders/{orderId} {
+          allow write: if isOwner(userId) || isStaff(userId, eventId);
+        }
+        match /customers/{customerId} {
+          allow write: if isOwner(userId);
+        }
+      }
     }
   }
 }

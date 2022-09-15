@@ -28,6 +28,7 @@ export namespace CommonFirestore {
   export const Owner = t.type({
     displayName: t.string,
     email: t.string,
+    userId: t.string,
   });
 
   export const getEvent = <T extends t.Mixed>(timestamp: T) =>
@@ -39,6 +40,7 @@ export namespace CommonFirestore {
       openingTimes: t.array(
         t.type({ from: timestamp, to: timestamp, headcount: t.number })
       ),
+      staffEmails: t.array(t.string),
     });
 
   export const getOrder = <T extends t.Mixed, S extends t.Mixed>(
@@ -150,6 +152,16 @@ export namespace CommonFunctions {
   export namespace SendAdjustingEmail {
     export const In = t.type({
       eventId: t.string,
+    });
+
+    export const Out = Response;
+  }
+
+  export namespace InviteStuffByEmail {
+    export const In = t.type({
+      ownerId: t.string,
+      eventId: t.string,
+      email: t.string,
     });
 
     export const Out = Response;

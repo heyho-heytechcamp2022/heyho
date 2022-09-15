@@ -64,7 +64,7 @@ export namespace Firestore {
 export namespace Functions {
   export namespace FindOrderByIam {
     export const Out = CommonFunctions.FindOrderByIam.getOut(
-      DocumentReferenceIoto,
+      CommonFirestore.SerializedDocumentReferenceIots,
       CommonFirestore.SerializedTimestampIots
     );
   }

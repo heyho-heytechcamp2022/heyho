@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from "vue";
+import { ref, computed, onUnmounted } from "vue";
 import { useRoute } from "vue-router";
 import {
   collection,
@@ -20,7 +20,6 @@ import * as t from "io-ts";
 const route = useRoute();
 const { userId } = await getUser();
 
-// TODO: route gurde ができたら delete
 if (!userId) {
   throw new Error("userId is not found");
 }
@@ -33,60 +32,78 @@ const q = query(
 
 let items = ref<(t.TypeOf<typeof Firestore.Item> & { docId: string })[]>([]);
 
-const unsub = onSnapshot(q, (querySnapshot) => {
+const unsub = onSnapshot(q, async (querySnapshot) => {
   items.value = querySnapshot.docs.map((doc) => ({
     docId: doc.id,
     ...doc.data(),
   }));
+  await updateHandlingOrdersAndCustomers();
 });
 
-let orders = ref<(t.TypeOf<typeof Firestore.Order> & { docId: string })[]>([]);
+type Order = t.TypeOf<typeof Firestore.Order> & { docId: string };
+
+let orders = ref<Order[]>([]);
+
+const handlingOrdersAndCustomers = ref<
+  {
+    order: Order;
+    customer: t.TypeOf<typeof CommonFirestore.Customer>;
+  }[]
+>();
 
 const q2 = query(
   collection(db, `users/${userId}/events/${eventId}/orders`)
 ).withConverter(Firestore.converter(Firestore.Order));
 
-const unsub2 = onSnapshot(q2, (querySnapshot) => {
+const unsub2 = onSnapshot(q2, async (querySnapshot) => {
   orders.value = querySnapshot.docs.map((doc) => ({
     docId: doc.id,
     ...doc.data(),
   }));
+  await updateHandlingOrdersAndCustomers();
 });
 
-const handlingItems = items.value.filter(
-  (item) =>
-    item.eventRef?.id === doc(db, `users/${userId}/events/${eventId}`).id
-);
+const updateHandlingOrdersAndCustomers = async () => {
+  const handlingItems = items.value.filter(
+    (item) =>
+      item.eventRef?.id === doc(db, `users/${userId}/events/${eventId}`).id
+  );
 
-const handlingOrders = orders.value
-  .map((order) => {
-    return {
-      ...order,
-      items: order.items.filter((item) =>
-        handlingItems.some(
-          (handlingItem) => handlingItem.docId === item.itemRef.id
+  const handlingOrders = orders.value
+    .map((order) => {
+      return {
+        ...order,
+        items: order.items.filter((item) =>
+          handlingItems.some(
+            (handlingItem) => handlingItem.docId === item.itemRef.id
+          )
+        ),
+      };
+    })
+    .filter((order) => order.items.length > 0);
+
+  handlingOrdersAndCustomers.value = await Promise.all(
+    handlingOrders.map(async (order) => {
+      const docSnap = await getDoc(
+        order.customerRef.withConverter(
+          Firestore.converter(CommonFirestore.Customer)
         )
-      ),
-    };
-  })
-  .filter((order) => order.items.length > 0);
+      );
+      const docData = docSnap.data();
+      if (!docData) throw new Error("docData is not found");
 
-const handlingOrdersAndCustomers = await Promise.all(
-  handlingOrders.map(async (order) => {
-    const docSnap = await getDoc(
-      order.customerRef.withConverter(
-        Firestore.converter(CommonFirestore.Customer)
-      )
-    );
-    const docData = docSnap.data();
-    if (!docData) throw new Error("docData is not found");
+      return {
+        order,
+        customer: docData,
+      };
+    })
+  );
+};
 
-    return {
-      order,
-      customer: docData,
-    };
-  })
-);
+onUnmounted(() => {
+  unsub();
+  unsub2();
+});
 
 const updateItemEvent = async (id: string, willSelect: boolean) => {
   const itemDocRef = doc(
@@ -102,12 +119,13 @@ const updateItemEvent = async (id: string, willSelect: boolean) => {
   });
 };
 
-// TODO: リロードしなくても反映されるように
 const updateStatus = async (index: number) => {
+  if (!handlingOrdersAndCustomers.value) return;
+
   const statusDocRef = doc(
     db,
     `users/${userId}/events/${eventId}/orders`,
-    handlingOrdersAndCustomers[index].order.docId
+    handlingOrdersAndCustomers.value[index].order.docId
   ).withConverter(Firestore.converter(Firestore.Order));
   const statusDocSnap = await getDoc(statusDocRef);
   if (

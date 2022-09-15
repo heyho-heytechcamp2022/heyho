@@ -60,7 +60,7 @@ const addStaff = async () => {
   }
 };
 
-const nowUrl = ref(location.href + "orders/check");
+const nowUrl = ref(location.href.replace(/\/$/, "") + "/orders/check");
 </script>
 
 <template>

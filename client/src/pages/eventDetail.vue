@@ -107,6 +107,7 @@ const nowUrl = ref(location.href + "orders/check");
             {{ event.theme }}
             <div class="canvas" id="canvas"></div>
           </p>
+        </div>
       </div>
       <div>
         <h2>スタッフ一覧</h2>

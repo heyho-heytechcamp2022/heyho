@@ -17,7 +17,7 @@ jobs:
           CI: true
 
       - name: Install dependencies and build.
-        run: npm ci && npm run buil
+        run: npm ci && npm run build
         working-directory: ./client
         env:
           CI: true

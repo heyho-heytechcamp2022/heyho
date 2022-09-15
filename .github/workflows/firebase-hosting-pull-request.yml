@@ -9,7 +9,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - run: cd ./client && npm ci && npm run build
+
+      - name: Install dependencies for common types
+        run: npm ci
+        working-directory: ./common/types
+        env:
+          CI: true
+
+      - name: Install dependencies and build.
+        run: npm ci && npm run buil
+        working-directory: ./client
+        env:
+          CI: true
+
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: "${{ secrets.GITHUB_TOKEN }}"

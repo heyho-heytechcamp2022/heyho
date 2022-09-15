@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { httpsCallable } from "@firebase/functions";
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 import { useRoute } from "vue-router";
 import { functions } from "~/firebase";
 import { CommonFunctions } from "@common";
@@ -24,6 +24,7 @@ const _result = await httpsCallable<
 const result = _result.body;
 
 const orderStatus = ref(result.order.data.status);
+const eventTheme = ref(result.event.data.theme);
 
 const selectDatetime = async (n: number, diff: number) => {
   const res = await httpsCallable<
@@ -51,6 +52,10 @@ const generateQrCodeImageLink = (data: string) =>
   `https://api.qrserver.com/v1/create-qr-code/?data=${encodeURI(
     data
   )}&size=300x300`;
+
+onMounted(() => {
+  document.body.style.backgroundColor = eventTheme.value;
+});
 </script>
 
 <template>

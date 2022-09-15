@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useRoute } from "vue-router";
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 import { doc, getDoc } from "firebase/firestore";
 import { db, getUser, functions } from "~/firebase";
 import { Firestore } from "~/types";
@@ -31,6 +31,11 @@ const docData = docSnap.data();
 if (!docData) throw new Error("docData is not found");
 
 const event = ref(docData);
+onMounted(() => {
+  const element = document.getElementById("canvas");
+  if (!element) return;
+  element.style.backgroundColor = event.value.theme;
+});
 
 const newStaffEmail = ref("");
 
@@ -92,16 +97,17 @@ const nowUrl = ref(location.href + "orders/check");
             {{ openingTime.to.toDate().toLocaleString() }}
           </div>
         </div>
-      </div>
-      <div>
-        <h2>1 時間あたりの最大受取可能人数</h2>
-        <p class="value">{{ event.maxPreception }} 人</p>
-      </div>
-      <div>
-        <h2>テーマ</h2>
-        <p class="value">
-          {{ event.theme }}
-        </p>
+        <div>
+          <h2>1 時間あたりの最大受取可能人数</h2>
+          <p class="value">{{ event.maxPreception }} 人</p>
+        </div>
+        <div>
+          <h2>テーマカラー</h2>
+          <div class="value">
+            {{ event.theme }}
+            <div class="canvas" id="canvas"></div>
+          </div>
+        </div>
       </div>
       <div>
         <h2>スタッフ一覧</h2>
@@ -178,6 +184,13 @@ const nowUrl = ref(location.href + "orders/check");
     &:hover {
       opacity: 0.7;
     }
+  }
+}
+
+.value {
+  .canvas {
+    width: 55px;
+    height: 15px;
   }
 }
 </style>

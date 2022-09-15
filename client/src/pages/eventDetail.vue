@@ -2,9 +2,13 @@
 import { useRoute } from "vue-router";
 import { ref } from "vue";
 import { doc, getDoc } from "firebase/firestore";
-import { db, getUser } from "~/firebase";
+import { db, getUser, functions } from "~/firebase";
 import { Firestore } from "~/types";
 import Button from "~/components/Button.vue";
+import Input from "~/components/Input.vue";
+import { httpsCallable } from "@firebase/functions";
+import * as t from "io-ts";
+import { CommonFunctions } from "@common";
 
 const route = useRoute();
 const { userId } = await getUser();
@@ -28,7 +32,33 @@ if (!docData) throw new Error("docData is not found");
 
 const event = ref(docData);
 
-console.log(event.value);
+const newStaffEmail = ref("");
+
+const addStaff = async () => {
+  if (!userId) return;
+  if (!event.value) return;
+
+  console.log("addStaff", newStaffEmail.value);
+
+  const res = await httpsCallable<
+    t.TypeOf<typeof CommonFunctions.InviteStuffByEmail.In>,
+    t.TypeOf<typeof CommonFunctions.InviteStuffByEmail.Out>
+  >(
+    functions,
+    "inviteStuffByEmail"
+  )({
+    ownerId: userId,
+    eventId: id,
+    email: newStaffEmail.value,
+  }).then((res) => res.data);
+
+  if (res.status === "error") {
+    console.error(res);
+    alert("ユーザが見つかりませんでした");
+  } else {
+    window.location.reload();
+  }
+};
 </script>
 
 <template>
@@ -60,15 +90,39 @@ console.log(event.value);
             {{ openingTime.to.toDate().toLocaleString() }}
           </div>
         </div>
-        <div>
-          <h2>1 時間あたりの最大受取可能人数</h2>
-          <p class="value">{{ event.maxPreception }} 人</p>
-        </div>
-        <div>
-          <h2>テーマ</h2>
-          <p class="value">
-            {{ event.theme }}
+      </div>
+      <div>
+        <h2>1 時間あたりの最大受取可能人数</h2>
+        <p class="value">{{ event.maxPreception }} 人</p>
+      </div>
+      <div>
+        <h2>テーマ</h2>
+        <p class="value">
+          {{ event.theme }}
+        </p>
+      </div>
+      <div>
+        <h2>スタッフ一覧</h2>
+        <div class="value staff-list">
+          <p>
+            スタッフ権限が与えられたアカウントはグッズの受渡しを行なうことができます。
           </p>
+          <div v-for="email in event.staffEmails" class="email">
+            {{ email }}
+          </div>
+          <div class="add">
+            <Input
+              type="email"
+              v-model="newStaffEmail"
+              placeholder="招待したいスタッフのメールアドレスを入力"
+            />
+            <Button
+              @click="addStaff"
+              text="追加"
+              size="small"
+              icon="person_add"
+            />
+          </div>
         </div>
       </div>
     </div>
@@ -95,12 +149,20 @@ console.log(event.value);
     font-weight: bold;
     color: styles.$c-text-light;
   }
-  p {
+  .value {
     margin-bottom: 40px;
-    padding-left: 20px;
   }
 }
 
+.staff-list {
+  .email {
+    margin: 20px 0;
+  }
+  .add {
+    @include styles.center();
+    gap: 10px;
+  }
+}
 .bottom {
   @include styles.center();
   margin-top: 40px;

@@ -20,7 +20,7 @@ const openingTimes = ref<{ from: Date; to: Date; headcount: number }[]>([]);
 
 const addEvent = async () => {
   try {
-    const docRef = await addDoc(
+    await addDoc(
       collection(db, `users/${userId}/events`).withConverter(
         Firestore.converter(Firestore.Event)
       ),
@@ -34,9 +34,9 @@ const addEvent = async () => {
           to: Timestamp.fromDate(openingTime.to),
           headcount: openingTime.headcount,
         })),
+        staffEmails: [],
       }
     );
-    console.log("Document written with ID: ", docRef.id);
     router.push("/events");
   } catch {
     console.log("error");

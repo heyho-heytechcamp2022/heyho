@@ -19,6 +19,12 @@ export namespace CommonFirestore {
     _nanoseconds: t.number,
   });
 
+  export const SerializedDocumentReferenceIots = t.type({
+    _path: t.type({
+      segments: t.array(t.string),
+    }),
+  });
+
   export const Owner = t.type({
     displayName: t.string,
     email: t.string,

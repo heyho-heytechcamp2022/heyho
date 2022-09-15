@@ -8,6 +8,7 @@ import { Functions } from "~/types";
 import { db, functions } from "~/firebase";
 import { Firestore } from "~/types";
 import { getDoc, doc } from "firebase/firestore";
+import Button from "~/components/Button.vue";
 
 interface IState {
   iamFromQr: string;
@@ -83,14 +84,33 @@ const updateOrderStatus = async () => {
 <template>
   <div>
     <div class="box">
-      <button @click="isEnable = !isEnable">ON/OFF</button>
+      <Button
+        v-if="isEnable === false"
+        @click="isEnable = !isEnable"
+        text=""
+        theme="simple"
+        icon="videocam"
+      />
+      <Button
+        v-if="isEnable === true"
+        @click="isEnable = !isEnable"
+        text=""
+        theme="simple"
+        icon="videocam_off"
+      />
       <QRReader @scan="onScan" v-if="isEnable"></QRReader>
       <div v-for="orderItem in orderItems">
         <p>{{ orderItem.name }}</p>
         <p>{{ orderItem.quantity }}</p>
       </div>
       <div v-if="showGoods">
-        <button @click="updateOrderStatus()">確認</button>
+        <Button
+          @click="updateOrderStatus()"
+          text="確認"
+          theme="primary"
+          icon="check"
+          size="middle"
+        />
       </div>
     </div>
   </div>

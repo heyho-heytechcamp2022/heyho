@@ -11,12 +11,13 @@ import {
   DocumentReference,
   onSnapshot,
 } from "firebase/firestore";
-import { db, getUser } from "~/firebase";
-import { CommonFirestore } from "@common";
+import { db, functions, getUser } from "~/firebase";
+import { CommonFirestore, CommonFunctions } from "@common";
 import { Firestore } from "~/types";
 import ToggleSwitch from "~/components/ToggleSwitch.vue";
 import * as t from "io-ts";
-import { convertTimestampToDate } from "~/utls";
+import { httpsCallable } from "@firebase/functions";
+import Button from "~/components/Button.vue";
 
 const route = useRoute();
 const { userId } = await getUser();
@@ -139,6 +140,24 @@ const updateStatus = async (index: number) => {
   }
 };
 
+const sendAdjustingEmails = async () => {
+  const res = await httpsCallable<
+    t.TypeOf<typeof CommonFunctions.SendAdjustingEmail.In>,
+    t.TypeOf<typeof CommonFunctions.SendAdjustingEmail.Out>
+  >(
+    functions,
+    "sendAdjustingEmail"
+  )({
+    eventId,
+  }).then((res) => res.data);
+
+  if (res.status === "success") {
+    alert("メールを送信しました");
+  } else {
+    alert("メールの送信に失敗しました");
+  }
+};
+
 const isShowStatus = ref(true);
 const isShowRecieve = ref(true);
 const isShowAddress = ref(true);
@@ -151,6 +170,12 @@ const isShowTel = ref(true);
   </div>
   <div class="orders">
     <h2>連携設定</h2>
+    <p>※【開発デモ用】開発者にメールが届きます</p>
+    <Button
+      @click="sendAdjustingEmails"
+      text="受取日時調整メールを送る"
+      size="small"
+    />
 
     <h2>グッズ選択</h2>
     <div class="selecting-goods">

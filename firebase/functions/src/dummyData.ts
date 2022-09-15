@@ -32,28 +32,61 @@ export const dummyOrders: Order[] = [
       { id: "I-003", quantity: 2 },
     ],
   },
+  {
+    id: "O-004",
+    customerId: "C-004",
+    items: [
+      { id: "I-001", quantity: 4 },
+      { id: "I-007", quantity: 2 },
+      { id: "I-009", quantity: 10 },
+    ],
+  },
+  {
+    id: "O-005",
+    customerId: "C-004",
+    items: [
+      { id: "I-001", quantity: 4 },
+      { id: "I-005", quantity: 1 },
+      { id: "I-009", quantity: 3 },
+      { id: "I-010", quantity: 99 },
+    ],
+  },
 ];
 
 export const dummyCustomers: Customer[] = [
   {
     id: "C-001",
     name: "山田 南瓜",
-    email: "r+001@hosokawa.dev",
+    email: "yamada@example.com",
     phone: "000-0000-0000",
     address: "東京都渋谷区渋谷1-1-1",
   },
   {
     id: "C-002",
     name: "中田 トマト",
-    email: "r+002@hosokawa.dev",
+    email: "nakata@example.com",
     phone: "001-0001-0001",
     address: "東京都渋谷区渋谷2-2-2",
   },
   {
     id: "C-003",
     name: "鈴木 にんじん",
-    email: "r+003@hosokawa.dev",
+    email: "suzuki@example.com",
     phone: "001-0001-0001",
     address: "東京都渋谷区渋谷2-2-2",
+  },
+  {
+    id: "C-004",
+    name: "細川 R",
+    email: "r@hosokawa.dev",
+    phone: "001-0001-0001",
+    address: "茨城県つくば市XX-XX-XX",
+  },
+  {
+    id: "C-005",
+    name: "サトウ さん",
+    email: "yu.1hpa@gmail.com",
+    phone: "001-0001-0001",
+    address: "日本",
   },
 ];

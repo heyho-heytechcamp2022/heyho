@@ -146,4 +146,12 @@ export namespace CommonFunctions {
 
     export const Out = Response;
   }
+
+  export namespace SendAdjustingEmail {
+    export const In = t.type({
+      eventId: t.string,
+    });
+
+    export const Out = Response;
+  }
 }

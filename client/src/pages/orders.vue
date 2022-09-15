@@ -309,8 +309,9 @@ h2 {
   }
   tbody td {
     max-width: 300px;
-    padding: 0px 10px;
+    padding: 5px 10px;
     text-align: left;
+    border-top: 2px solid #ccc;
   }
 }
 .status_recieved {

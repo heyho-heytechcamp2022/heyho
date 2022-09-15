@@ -43,7 +43,7 @@ export const dummyOrders: Order[] = [
   },
   {
     id: "O-005",
-    customerId: "C-004",
+    customerId: "C-005",
     items: [
       { id: "I-001", quantity: 4 },
       { id: "I-005", quantity: 1 },

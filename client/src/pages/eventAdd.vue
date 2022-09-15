@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Timestamp, collection, addDoc } from "firebase/firestore";
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 import { db, getUser } from "~/firebase";
 import { Firestore } from "~/types";
@@ -15,7 +15,7 @@ const router = useRouter();
 const name = ref("");
 const location = ref("");
 const maxPreception = ref(0);
-const theme = ref("");
+const theme = ref("#eaf0e9");
 const openingTimes = ref<{ from: Date; to: Date; headcount: number }[]>([]);
 
 const addEvent = async () => {
@@ -105,8 +105,8 @@ const format = (date: Date) => {
       <Input type="number" v-model.number="maxPreception" />
     </div>
     <div class="row">
-      <p class="item">テーマ</p>
-      <Input type="text" v-model="theme" />
+      <p class="item">テーマカラー</p>
+      <input class="theme" type="color" v-model="theme" />
     </div>
   </div>
   <div class="bottom">
@@ -131,6 +131,13 @@ const format = (date: Date) => {
     margin-bottom: 5px;
     font-weight: bold;
     color: rgb(106, 106, 106);
+  }
+  .theme {
+    background-color: white;
+    border-color: #ccc;
+    &:hover {
+      border-color: #797979;
+    }
   }
 }
 

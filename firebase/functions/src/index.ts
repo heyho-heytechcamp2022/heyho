@@ -2,7 +2,6 @@ import * as functions from "firebase-functions";
 import { fetchFromEc, saveToFirestore } from "./ec";
 import { db } from "./init";
 import { sendAdjustingEmail as _sendAdjustingEmail } from "./email";
-import { requireAuth } from "./utils";
 import { CommonFirestore, CommonFunctions } from "../../../common/types";
 import { Functions, Firestore } from "./types";
 import t from "io-ts";

@@ -1,14 +1,12 @@
 <script setup lang="ts">
-import { ref, computed, onUnmounted } from "vue";
+import { ref, onUnmounted } from "vue";
 import { useRoute } from "vue-router";
 import {
   collection,
-  getDocs,
   doc,
   getDoc,
   updateDoc,
   query,
-  DocumentReference,
   onSnapshot,
 } from "firebase/firestore";
 import { db, functions, getUser } from "~/firebase";

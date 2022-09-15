@@ -1,12 +1,10 @@
 <script setup lang="ts">
 import { httpsCallable } from "@firebase/functions";
-import { Timestamp, collection, addDoc } from "firebase/firestore";
 import { ref } from "vue";
-import { useRoute, useRouter } from "vue-router";
-import { db, auth, getUser, functions } from "~/firebase";
-import axios from "axios";
+import { useRoute } from "vue-router";
+import { functions } from "~/firebase";
 import { CommonFunctions } from "@common";
-import { Firestore, Functions } from "~/types";
+import { Functions } from "~/types";
 import * as t from "io-ts";
 import Button from "~/components/Button.vue";
 import { convertTimestampToDate } from "~/utls";

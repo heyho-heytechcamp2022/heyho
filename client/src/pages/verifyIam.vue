@@ -1,12 +1,10 @@
 <script setup lang="ts">
-import { Timestamp, collection, addDoc } from "firebase/firestore";
 import { httpsCallable } from "firebase/functions";
-import { ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { db, auth, getUser, functions } from "~/firebase";
+import { functions } from "~/firebase";
 import * as t from "io-ts";
 import { CommonFunctions } from "@common";
-import { Firestore, Functions } from "~/types";
+import { Functions } from "~/types";
 
 const router = useRouter();
 const route = useRoute();

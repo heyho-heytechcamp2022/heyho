@@ -2,8 +2,7 @@
 import { Timestamp, collection, addDoc } from "firebase/firestore";
 import { ref } from "vue";
 import { useRouter } from "vue-router";
-import { db, auth, getUser } from "~/firebase";
-import { CommonFirestore } from "@common";
+import { db, getUser } from "~/firebase";
 import { Firestore } from "~/types";
 import Datepicker from "@vuepic/vue-datepicker";
 import "@vuepic/vue-datepicker/dist/main.css";

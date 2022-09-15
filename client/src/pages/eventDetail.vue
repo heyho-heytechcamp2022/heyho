@@ -1,14 +1,8 @@
 <script setup lang="ts">
 import { useRoute } from "vue-router";
-import { ref, computed } from "vue";
-import {
-  collection,
-  getDocs,
-  doc,
-  getDoc,
-  updateDoc,
-} from "firebase/firestore";
-import { db, auth, getUser } from "~/firebase";
+import { ref } from "vue";
+import { doc, getDoc } from "firebase/firestore";
+import { db, getUser } from "~/firebase";
 import { Firestore } from "~/types";
 import Button from "~/components/Button.vue";
 

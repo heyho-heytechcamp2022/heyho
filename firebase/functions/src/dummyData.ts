@@ -88,5 +88,5 @@ export const dummyCustomers: Customer[] = [
     email: "yu.1hpa@gmail.com",
     phone: "001-0001-0001",
     address: "日本",
-  }
+  },
 ];

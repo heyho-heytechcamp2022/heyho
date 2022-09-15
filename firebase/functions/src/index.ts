@@ -6,7 +6,7 @@ import { requireAuth } from "./utils";
 import { CommonFirestore, CommonFunctions } from "../../../common/types";
 import { Functions, Firestore } from "./types";
 import t from "io-ts";
-import { DocumentReference } from "firebase-admin/firestore";
+import { DocumentReference, Timestamp } from "firebase-admin/firestore";
 
 const REGION = "asia-northeast1";
 
@@ -251,6 +251,7 @@ export const updateOrderStatus = functions
         .withConverter(Firestore.converter(Firestore.Order));
       statusRef.update({
         status: "completed",
+        recievedDateTime: Timestamp.now(),
       });
 
       return { status: "success", body: null };

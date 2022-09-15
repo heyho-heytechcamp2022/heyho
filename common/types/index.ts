@@ -66,6 +66,7 @@ export namespace CommonFirestore {
           timesIndex: t.number,
         }),
       ]),
+      recievedDateTime: t.union([timestamp, t.null]),
     });
 
   export const getItem = <T extends t.Mixed>(documentReference: T) =>

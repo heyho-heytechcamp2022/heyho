@@ -16,6 +16,7 @@ import { CommonFirestore } from "@common";
 import { Firestore } from "~/types";
 import ToggleSwitch from "~/components/ToggleSwitch.vue";
 import * as t from "io-ts";
+import { convertTimestampToDate } from "~/utls";
 
 const route = useRoute();
 const { userId } = await getUser();
@@ -187,9 +188,7 @@ const isShowTel = ref(true);
           <th v-if="isShowStatus">ステータス</th>
           <th>名前</th>
           <th v-if="isShowRecieve">受取予定時間</th>
-          <!-- TODO: 受け取った時間の値を用意
-        <th>受け取った時間</th>
-        -->
+          <th>受け取った時間</th>
           <th v-if="isShowAddress">住所</th>
           <th v-if="isShowTel">電話番号</th>
         </tr>
@@ -219,9 +218,13 @@ const isShowTel = ref(true);
           <td v-if="isShowRecieve">
             {{ eventOrderAndCustomer.order.receiptDatetime }}
           </td>
-          <!-- TODO: 受け取った時間の値を用意
-        <td>{{ eventOrderAndCustomer.order.recievedtime }}</td>
-        -->
+          <td>
+            {{
+              eventOrderAndCustomer.order.recievedDateTime
+                ?.toDate()
+                .toLocaleTimeString()
+            }}
+          </td>
           <td v-if="isShowAddress">
             {{ eventOrderAndCustomer.customer?.address }}
           </td>

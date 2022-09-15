@@ -8,7 +8,11 @@ import "./styles/_index.scss";
 const router = createRouter({
   history: createWebHistory(),
   routes: [
-    { path: "/", component: () => import("./pages/index.vue") },
+    {
+      path: "/",
+      component: () => import("./pages/events.vue"),
+      meta: { requireAuth: true },
+    },
     { path: "/login", component: () => import("./pages/login.vue") },
     {
       path: "/events",
@@ -41,6 +45,7 @@ const router = createRouter({
     {
       path: "/events/:eventId/orders/check",
       component: () => import("./pages/orderCheck.vue"),
+      meta: { requireAuth: true },
     },
   ],
 });

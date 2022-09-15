@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useRoute } from "vue-router";
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 import { doc, getDoc } from "firebase/firestore";
 import { db, getUser } from "~/firebase";
 import { Firestore } from "~/types";
@@ -27,8 +27,11 @@ const docData = docSnap.data();
 if (!docData) throw new Error("docData is not found");
 
 const event = ref(docData);
-
-console.log(event.value);
+onMounted(() => {
+  const element = document.getElementById("canvas");
+  if (!element) return;
+  element.style.backgroundColor = event.value.theme
+});
 </script>
 
 <template>
@@ -65,9 +68,10 @@ console.log(event.value);
           <p class="value">{{ event.maxPreception }} 人</p>
         </div>
         <div>
-          <h2>テーマ</h2>
+          <h2>テーマカラー</h2>
           <p class="value">
             {{ event.theme }}
+          <div class="canvas" id="canvas"></div>
           </p>
         </div>
       </div>
@@ -112,6 +116,13 @@ console.log(event.value);
     &:hover {
       opacity: 0.7;
     }
+  }
+}
+
+.value {
+  .canvas {
+    width: 55px;
+    height: 15px;
   }
 }
 </style>

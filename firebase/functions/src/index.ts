@@ -5,7 +5,11 @@ import { sendAdjustingEmail as _sendAdjustingEmail } from "./email";
 import { CommonFirestore, CommonFunctions } from "../../../common/types";
 import { Functions, Firestore } from "./types";
 import t from "io-ts";
-import { DocumentReference, Timestamp } from "firebase-admin/firestore";
+import {
+  DocumentReference,
+  Timestamp,
+  FieldValue,
+} from "firebase-admin/firestore";
 
 const REGION = "asia-northeast1";
 
@@ -16,6 +20,7 @@ export const createUserCollection = functions
     db.collection("users").doc(user.uid).set({
       email: user.email,
       displayName: user.displayName,
+      userId: user.uid,
     });
   });
 
@@ -251,6 +256,59 @@ export const updateOrderStatus = functions
       statusRef.update({
         status: "completed",
         recievedDateTime: Timestamp.now(),
+      });
+
+      return { status: "success", body: null };
+    }
+  );
+
+export const inviteStuffByEmail = functions
+  .region(REGION)
+  .https.onCall(
+    async (
+      data
+    ): Promise<t.TypeOf<typeof CommonFunctions.InviteStuffByEmail.Out>> => {
+      if (!CommonFunctions.InviteStuffByEmail.In.is(data))
+        throw new functions.https.HttpsError(
+          "invalid-argument",
+          "Invalid argument types."
+        );
+
+      const ownerId = data.ownerId;
+      const eventId = data.eventId;
+      const email = data.email;
+
+      if (!ownerId)
+        throw new functions.https.HttpsError(
+          "invalid-argument",
+          "Owner ID must be provided"
+        );
+
+      if (!eventId)
+        throw new functions.https.HttpsError(
+          "invalid-argument",
+          "Event ID must be provided"
+        );
+
+      if (!email)
+        throw new functions.https.HttpsError(
+          "invalid-argument",
+          "Email must be provided"
+        );
+
+      const querySnapshot = await db
+        .collection(`users`)
+        .withConverter(Firestore.converter(CommonFirestore.Owner))
+        .where("email", "==", email)
+        .get();
+
+      if (querySnapshot.empty) return { status: "error", body: null };
+
+      const statusRef = db
+        .doc(`users/${ownerId}/events/${eventId}`)
+        .withConverter(Firestore.converter(Firestore.Event));
+      statusRef.update({
+        staffEmails: FieldValue.arrayUnion(email),
       });
 
       return { status: "success", body: null };

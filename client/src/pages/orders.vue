@@ -239,7 +239,17 @@ const isShowTel = ref(true);
           </td>
           <td>{{ eventOrderAndCustomer.customer?.name }}</td>
           <td v-if="isShowRecieve">
-            {{ eventOrderAndCustomer.order.receiptDatetime }}
+            {{
+              eventOrderAndCustomer.order.receiptDatetime?.from
+                .toDate()
+                .toLocaleString()
+            }}
+            ~
+            {{
+              eventOrderAndCustomer.order.receiptDatetime?.to
+                .toDate()
+                .toLocaleString()
+            }}
           </td>
           <td>
             {{

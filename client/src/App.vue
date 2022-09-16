@@ -4,6 +4,7 @@ import { signOut, User } from "firebase/auth";
 import { useRouter } from "vue-router";
 import { ref } from "vue";
 import Header from "./components/Header.vue";
+import Button from "./components/Button.vue";
 
 const router = useRouter();
 const handleLogoutClick = () => {
@@ -33,16 +34,24 @@ const handleLoginClick = () => {
         <div class="header-wrap">
           <Header>
             <div v-if="isLogin" class="header-button --islogin">
-              <div class="user-icon">
+              <div v-if="userInfo?.photoURL" class="user-icon">
                 <img :src="userInfo?.photoURL ?? ''" />
               </div>
               <p>
                 {{ userInfo?.displayName }}
               </p>
-              <button @click="handleLogoutClick()">ログアウト</button>
+              <Button
+                @click="handleLogoutClick()"
+                text="ログアウト"
+                theme="simple"
+              />
             </div>
             <div v-else>
-              <button @click="handleLoginClick">ログイン</button>
+              <Button
+                @click="handleLoginClick"
+                text="ログイン"
+                theme="primary"
+              />
             </div>
           </Header>
         </div>

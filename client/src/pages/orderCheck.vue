@@ -9,6 +9,7 @@ import { db, functions } from "~/firebase";
 import { Firestore } from "~/types";
 import { getDoc, doc } from "firebase/firestore";
 import Button from "~/components/Button.vue";
+import { useRouter } from "vue-router";
 
 interface IState {
   iamFromQr: string;
@@ -79,25 +80,33 @@ const updateOrderStatus = async () => {
     location.reload();
   }
 };
+
+const router = useRouter();
+const backToOrder = () => {
+  router.back();
+};
 </script>
 
 <template>
   <div>
     <div class="box">
-      <Button
-        v-if="isEnable === false"
-        @click="isEnable = !isEnable"
-        text=""
-        theme="simple"
-        icon="videocam"
-      />
-      <Button
-        v-if="isEnable === true"
-        @click="isEnable = !isEnable"
-        text=""
-        theme="simple"
-        icon="videocam_off"
-      />
+      <div class="top-wrap">
+        <Button
+          v-if="isEnable === false"
+          @click="isEnable = !isEnable"
+          text=""
+          theme="simple"
+          icon="videocam"
+        />
+        <Button
+          v-if="isEnable === true"
+          @click="isEnable = !isEnable"
+          text=""
+          theme="simple"
+          icon="videocam_off"
+        />
+        <Button @click="backToOrder" text="戻る" icon="arrow_back" />
+      </div>
       <div class="qrreader-wrap">
         <QRReader @scan="onScan" v-if="isEnable" />
       </div>
@@ -125,6 +134,11 @@ const updateOrderStatus = async () => {
 .box {
   max-width: 600px;
   margin: 0 auto;
+  .top-wrap {
+    display: flex;
+    justify-content: space-between;
+    margin: 10px;
+  }
 }
 
 .info {

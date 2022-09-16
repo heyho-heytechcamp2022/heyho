@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, onUnmounted } from "vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import {
   collection,
   doc,
@@ -18,6 +18,7 @@ import { httpsCallable } from "@firebase/functions";
 import Button from "~/components/Button.vue";
 
 const route = useRoute();
+const router = useRouter();
 const { userId } = await getUser();
 
 if (!userId) {
@@ -156,6 +157,10 @@ const sendAdjustingEmails = async () => {
   }
 };
 
+const switchToQrReader = () => {
+  router.push(`/events/${eventId}/orders/check`);
+};
+
 const isShowStatus = ref(true);
 const isShowRecieve = ref(true);
 const isShowAddress = ref(true);
@@ -165,6 +170,9 @@ const isShowTel = ref(true);
 <template>
   <div class="h1-wrap">
     <h1>注文一覧</h1>
+    <div class="button-wrap">
+      <Button @click="switchToQrReader" text="QR" size="small" icon="qr_code" />
+    </div>
   </div>
   <div class="orders">
     <h2>連携設定</h2>
@@ -272,6 +280,8 @@ const isShowTel = ref(true);
 @use "~/styles";
 
 .h1-wrap {
+  display: flex;
+  justify-content: space-between;
   @include styles.h1-wrap;
 }
 

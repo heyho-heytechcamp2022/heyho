@@ -64,7 +64,10 @@ const format = (date: Date) => {
   const hours = date.getHours();
   const minutes = date.getMinutes();
 
-  return `${year}/${month}/${day} ${hours}:${minutes}`;
+  return `${year}/${String(month).padStart(2, "0")}/${String(day).padStart(
+    2,
+    "0"
+  )} ${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}`;
 };
 </script>
 

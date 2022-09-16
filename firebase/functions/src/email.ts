@@ -106,7 +106,10 @@ export const sendAdjustingEmail = functions
     }
   );
 
-const generateEmailMessage = (order: any, customer: any) => ({
+const generateEmailMessage = (
+  order: t.TypeOf<typeof Firestore.Order>,
+  customer: t.TypeOf<typeof CommonFirestore.Customer>
+) => ({
   to: customer.email,
   from: "hosokawa@heyho.fans",
   subject: "受取日程調整のお願い",

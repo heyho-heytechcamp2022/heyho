@@ -20,7 +20,7 @@ export const dummyOrders: Order[] = [
     customerId: "C-002",
     items: [
       { id: "I-001", quantity: 1 },
-      { id: "I-002", quantity: 2 },
+      { id: "I-003", quantity: 2 },
     ],
   },
   {
@@ -51,6 +51,22 @@ export const dummyOrders: Order[] = [
       { id: "I-010", quantity: 99 },
     ],
   },
+  {
+    id: "O-006",
+    customerId: "C-006",
+    items: [
+      { id: "I-001", quantity: 1 },
+      { id: "I-002", quantity: 2 },
+      { id: "I-003", quantity: 3 },
+      { id: "I-004", quantity: 4 },
+      { id: "I-005", quantity: 5 },
+      { id: "I-006", quantity: 6 },
+      { id: "I-007", quantity: 7 },
+      { id: "I-008", quantity: 8 },
+      { id: "I-009", quantity: 9 },
+      { id: "I-010", quantity: 10 },
+    ],
+  },
 ];
 
 export const dummyCustomers: Customer[] = [
@@ -78,15 +94,22 @@ export const dummyCustomers: Customer[] = [
   {
     id: "C-004",
     name: "細川 R",
-    email: "r@hosokawa.dev",
+    email: "r@example.com",
     phone: "001-0001-0001",
     address: "茨城県つくば市XX-XX-XX",
   },
   {
     id: "C-005",
     name: "サトウ さん",
-    email: "yu.1hpa@gmail.com",
+    email: "yu.1hpa@eample.com",
     phone: "001-0001-0001",
     address: "日本",
+  },
+  {
+    id: "C-006",
+    name: "受取デモ用アカウント（イベントオーナー）",
+    email: "DEMO_EMAIL",
+    phone: "001-0001-0001",
+    address: "日本のどこか",
   },
 ];

@@ -19,7 +19,7 @@ import Button from "~/components/Button.vue";
 
 const route = useRoute();
 const router = useRouter();
-const { userId } = await getUser();
+const { userId, user } = await getUser();
 
 if (!userId) {
   throw new Error("userId is not found");
@@ -171,19 +171,22 @@ const isShowTel = ref(true);
   <div class="h1-wrap">
     <h1>注文一覧</h1>
     <div class="button-wrap">
-      <Button @click="switchToQrReader" text="QR" size="small" icon="qr_code" />
+      <Button
+        @click="switchToQrReader"
+        text="QRコードを読み込む"
+        size="small"
+        icon="qr_code"
+      />
     </div>
   </div>
   <div class="orders">
-    <h2>連携設定</h2>
-    <p>※【開発デモ用】開発者にメールが届きます</p>
-    <Button
-      @click="sendAdjustingEmails"
-      text="受取日時調整メールを送る"
-      size="small"
-    />
+    <h2>EC サイトとの連携設定</h2>
+    <p>
+      デモでは注文情報はダミーデータを入れているので設定できません。将来的には様々な
+      EC サイトとの連携設定が行えるようになる想定です。
+    </p>
 
-    <h2>グッズ選択</h2>
+    <h2>当日受渡対象のグッズを選択</h2>
     <div class="selecting-goods">
       <div v-for="item in items" :key="item.docId" class="item-row">
         <button
@@ -204,6 +207,20 @@ const isShowTel = ref(true);
         </button>
         <p class="name">{{ item.name }}</p>
       </div>
+    </div>
+
+    <h2>【開発デモ用】商品受取用メールの送信</h2>
+    <div>
+      <p>
+        ※
+        {{ user?.email }}
+        にメールが届きます。一度送信した顧客には再度メールを送ることはできません。
+      </p>
+      <Button
+        @click="sendAdjustingEmails"
+        text="受取日時調整デモメールを送る"
+        size="small"
+      />
     </div>
 
     <h2>注文一覧</h2>

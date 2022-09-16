@@ -5,6 +5,8 @@
 This method may not work.
 Because you need to join the Firebase project.
 
+If you want to try [Online Demo](https://heyho.fans/).
+
 ### Prepare
 
 ```bash

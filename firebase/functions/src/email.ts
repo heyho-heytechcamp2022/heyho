@@ -43,6 +43,16 @@ export const sendAdjustingEmail = functions
         (doc) => doc.ref
       );
 
+      const ownerSnap = await db
+        .doc(`users/${userId}`)
+        .withConverter(Firestore.converter(CommonFirestore.Owner))
+        .get();
+      const ownerData = ownerSnap.data();
+      if (!ownerData)
+        throw new functions.https.HttpsError("not-found", "Owner not found");
+
+      const ownerEmail = ownerData.email;
+
       const sgMailApiKey = process.env.SENDGRID_API_KEY;
 
       if (!sgMailApiKey)
@@ -67,6 +77,8 @@ export const sendAdjustingEmail = functions
             console.log("Not sending email to " + customer.email);
             return;
           }
+
+          if (customer.email === "DEMO_EMAIL") customer.email = ownerEmail;
 
           const message = generateEmailMessage(order, customer);
 
@@ -109,4 +121,5 @@ const generateUrl = (iam: string) => `https://heyho.fans/iam/${iam}`;
 
 const isTestEmailAdress = (email: string) =>
   /r(\+.+)?@hosokawa\.dev/.test(email) ||
-  /yu\.1hpa(\+.+)?@gmail\.com$/.test(email);
+  /yu\.1hpa(\+.+)?@gmail\.com$/.test(email) ||
+  "DEMO_EMAIL" === email;

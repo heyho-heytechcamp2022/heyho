@@ -2,6 +2,9 @@
 
 ## Setup
 
+This method may not work.
+Because you need to join the Firebase project.
+
 ### Prepare
 
 ```bash

@@ -82,11 +82,7 @@ onMounted(() => {
           {{ convertTimestampToDate(range.from).toLocaleString() }} 〜
           {{ convertTimestampToDate(range.to).toLocaleString() }}
         </div>
-        <Button
-          @click="selectDatetime(i, 1)"
-          text="この時間を選択"
-          size="small"
-        />
+        <Button @click="selectDatetime(i, 1)" text="選択" size="small" />
       </div>
     </div>
   </div>

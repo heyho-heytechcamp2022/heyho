@@ -34,12 +34,12 @@ const handleClick = () => {
       :class="`button__element--${props.theme} button__element--${props.size}`"
       @click="handleClick"
     >
-      <span class="text">
+      <div class="text">
         {{ props.text }}
-      </span>
-      <span v-if="props.icon" class="button__icon material-symbols-outlined">
+      </div>
+      <div v-if="props.icon" class="button__icon material-symbols-outlined">
         {{ props.icon }}
-      </span>
+      </div>
     </component>
   </div>
 </template>
@@ -55,10 +55,15 @@ const handleClick = () => {
 
     .text {
       flex-shrink: 0;
+      word-break: break-all;
     }
 
     &:hover {
       opacity: 0.7;
+    }
+
+    &:active {
+      opacity: 0.2;
     }
 
     &--primary {

@@ -225,10 +225,10 @@ const isShowTel = ref(true);
 
     <h2>注文一覧</h2>
     <ul class="is_show">
-      <li>ステータス<ToggleSwitch v-model="isShowStatus" /></li>
-      <li>受取予定時間<ToggleSwitch v-model="isShowRecieve" /></li>
-      <li>住所<ToggleSwitch v-model="isShowAddress" /></li>
-      <li>電話番号<ToggleSwitch v-model="isShowTel" /></li>
+      <li>ステータス<ToggleSwitch v-model="isShowStatus" id="status" /></li>
+      <li>受取予定時間<ToggleSwitch v-model="isShowRecieve" id="time" /></li>
+      <li>住所<ToggleSwitch v-model="isShowAddress" id="address" /></li>
+      <li>電話番号<ToggleSwitch v-model="isShowTel" id="phone" /></li>
     </ul>
     <table class="admin_user-list_recieved_goods">
       <thead>

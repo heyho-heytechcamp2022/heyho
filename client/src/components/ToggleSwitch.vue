@@ -1,7 +1,7 @@
 <template>
   <div class="switchArea">
-    <input type="checkbox" id="switch1" :checked="modelValue" />
-    <label for="switch1"></label>
+    <input type="checkbox" :id="id" :checked="modelValue" />
+    <label :for="id"></label>
     <div id="circle" @click.stop.self="toggle()"></div>
   </div>
 </template>
@@ -9,6 +9,7 @@
 <script lang="ts" setup>
 const props = defineProps<{
   modelValue: boolean;
+  id: string;
 }>();
 
 const emit = defineEmits(["update:modelValue"]);

@@ -1,7 +1,6 @@
 import * as functions from "firebase-functions";
 import { fetchFromEc, saveToFirestore } from "./ec";
 import { db } from "./init";
-import { sendAdjustingEmail as _sendAdjustingEmail } from "./email";
 import { CommonFirestore, CommonFunctions } from "../../../common/types";
 import { Functions, Firestore } from "./types";
 import t from "io-ts";
@@ -10,6 +9,9 @@ import {
   Timestamp,
   FieldValue,
 } from "firebase-admin/firestore";
+import { requireAuth } from "./utils";
+import sgMail from "@sendgrid/mail";
+import { generateEmailMessage, isTestEmailAdress } from "./email";
 
 const REGION = "asia-northeast1";
 
@@ -315,4 +317,102 @@ export const inviteStuffByEmail = functions
     }
   );
 
-export const sendAdjustingEmail = _sendAdjustingEmail;
+export const sendAdjustingEmail = functions
+  .region(REGION)
+  .runWith({ secrets: ["SENDGRID_API_KEY"] })
+  .https.onCall(
+    async (
+      data,
+      context
+    ): Promise<t.TypeOf<typeof CommonFunctions.SendAdjustingEmail.Out>> => {
+      const userId = requireAuth(context);
+
+      if (!CommonFunctions.SendAdjustingEmail.In.is(data))
+        throw new functions.https.HttpsError(
+          "invalid-argument",
+          "Invalid argument types."
+        );
+
+      const eventId = data.eventId;
+
+      if (!eventId)
+        throw new functions.https.HttpsError(
+          "invalid-argument",
+          "Event ID must be provided"
+        );
+
+      const unadjustedOrdersRef = db
+        .collection(`users/${userId}/events/${eventId}/orders`)
+        .withConverter(Firestore.converter(Firestore.Order));
+      const unadjustedOrdersSnapshop = await unadjustedOrdersRef
+        .where("status", "==", "unadjusted")
+        .get();
+      const unadjustedOrders = unadjustedOrdersSnapshop.docs.map((doc) =>
+        doc.data()
+      );
+      const unadjustedOrderRefs = unadjustedOrdersSnapshop.docs.map(
+        (doc) => doc.ref
+      );
+
+      const ownerSnap = await db
+        .doc(`users/${userId}`)
+        .withConverter(Firestore.converter(CommonFirestore.Owner))
+        .get();
+      const ownerData = ownerSnap.data();
+      if (!ownerData)
+        throw new functions.https.HttpsError("not-found", "Owner not found");
+
+      const ownerEmail = ownerData.email;
+
+      const sgMailApiKey = process.env.SENDGRID_API_KEY;
+
+      if (!sgMailApiKey)
+        throw new functions.https.HttpsError(
+          "internal",
+          "SendGrid API key is not set"
+        );
+
+      sgMail.setApiKey(sgMailApiKey);
+
+      await Promise.all(
+        unadjustedOrders.map(async (order, i) => {
+          const customerSnapshot = await order.customerRef
+            .withConverter(Firestore.converter(CommonFirestore.Customer))
+            .get();
+          const customer = customerSnapshot.data();
+
+          if (!customer) return;
+
+          // allow to send test emails
+          if (!isTestEmailAdress(customer.email)) {
+            console.log("Not sending email to " + customer.email);
+            return;
+          }
+
+          if (customer.email === "DEMO_EMAIL") customer.email = ownerEmail;
+
+          const message = generateEmailMessage(order, customer);
+
+          try {
+            await sgMail.send(message);
+            console.log(`Email sent to ${customer.email}`);
+          } catch (error) {
+            console.error(error);
+            // TODO: make type safe
+            // @ts-ignore
+            if (error.response) {
+              // @ts-ignore
+              console.error(error.response.body);
+            }
+            return;
+          }
+
+          await unadjustedOrderRefs[i].update({
+            status: "adjusting",
+          });
+        })
+      );
+
+      return { status: "success", body: null };
+    }
+  );
